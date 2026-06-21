@@ -1,0 +1,97 @@
+aid: coderabbit
+url: https://raw.githubusercontent.com/api-evangelist/coderabbit/refs/heads/main/apis.yml
+name: CodeRabbit
+kind: company
+description: CodeRabbit is an AI-powered code review platform that installs as a Git
+  app (GitHub, GitLab, Bitbucket, Azure DevOps) to deliver line-by-line, context-aware
+  reviews and summaries on pull requests, plus IDE and CLI reviews. It exposes a REST
+  API for on-demand developer activity report generation and is configured per-repository
+  with a .coderabbit.yaml file.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- AI
+- Code Review
+- Developer Tools
+- Pull Requests
+- DevOps
+created: '2026-06-21'
+modified: '2026-06-21'
+specificationVersion: '0.19'
+apis:
+- aid: coderabbit:coderabbit-reports-api
+  name: CodeRabbit Reports API
+  tags:
+  - Reports
+  - Analytics
+  - Developer Activity
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.coderabbit.ai/api-reference/report-generate
+  baseURL: https://api.coderabbit.ai/api/v1
+  properties:
+  - url: https://docs.coderabbit.ai/api-reference/report-generate
+    type: Documentation
+  - url: https://docs.coderabbit.ai/api-reference/report-generate
+    type: APIReference
+  - url: openapi/coderabbit-openapi.yml
+    type: OpenAPI
+  - url: collections/coderabbit.postman_collection.json
+    type: PostmanCollection
+  - url: collections/coderabbit.opencollection.json
+    type: OpenCollection
+  description: REST API for generating developer activity reports over a date range,
+    authenticated with the x-coderabbitai-api-key header. The POST /report.generate
+    endpoint returns an on-demand report and supports prompt templates, grouping,
+    and parameter filters.
+- aid: coderabbit:coderabbit-git-app-integration
+  name: CodeRabbit Git App Integration
+  tags:
+  - Git App
+  - Pull Requests
+  - Webhooks
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  properties:
+  - url: https://docs.coderabbit.ai/platforms/
+    type: Documentation
+  - url: https://docs.coderabbit.ai/getting-started/quickstart
+    type: GettingStarted
+  description: CodeRabbit installs as a Git application on GitHub, GitLab, Bitbucket,
+    and Azure DevOps, subscribing to pull/merge request events to post AI reviews,
+    summaries, and chat replies. Integration is event-driven rather than a public
+    REST surface.
+- aid: coderabbit:coderabbit-configuration
+  name: CodeRabbit Configuration
+  tags:
+  - Configuration
+  - YAML
+  - Repository Settings
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://docs.coderabbit.ai/getting-started/configure-coderabbit
+  baseURL: https://docs.coderabbit.ai
+  properties:
+  - url: https://docs.coderabbit.ai/getting-started/configure-coderabbit
+    type: Documentation
+  - url: https://docs.coderabbit.ai/reference/configuration
+    type: Reference
+  description: Per-repository behavior is configured with a .coderabbit.yaml file (validated
+    against a published JSON schema) controlling review tone, path filters, enabled
+    tools/linters, auto-review, and chat behavior.
+common:
+- type: GitHubOrganization
+  url: https://github.com/coderabbitai
+- type: LinkedIn
+  url: https://www.linkedin.com/company/coderabbitai
+- type: Website
+  url: https://www.coderabbit.ai
+- type: Documentation
+  url: https://docs.coderabbit.ai
+- type: Plans
+  url: plans/coderabbit-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/coderabbit-rate-limits.yml
+- type: FinOps
+  url: finops/coderabbit-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

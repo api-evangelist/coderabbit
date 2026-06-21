@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "CodeRabbit API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-coderabbitai-api-key",
+      "value": "{{apiKey}}",
+      "in": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate a developer activity report.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.coderabbit.ai/api/v1/report.generate",
+            "body": {
+              "type": "json",
+              "data": "{\n  \"from\": \"2024-05-01\",\n  \"to\": \"2024-05-15\"\n}"
+            }
+          },
+          "docs": "Generates a developer activity report based on the provided parameters and date range. Marked DEPRECATED; may take up to 10 minutes to respond depending on data volume."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

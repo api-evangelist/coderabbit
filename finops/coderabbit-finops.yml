@@ -1,0 +1,84 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: CodeRabbit
+providerId: coderabbit
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: true
+tags:
+- AI
+- Code Review
+- Developer Tools
+- Pull Requests
+- DevOps
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of CodeRabbit spend. CodeRabbit bills per contributing developer
+  (developers who open pull requests) on subscription tiers (Free, Lite, Pro,
+  Enterprise) rather than per-token or per-request usage. Pro is free forever
+  for public repositories. Cost is driven by the count of active contributing
+  developers and the chosen plan and billing cadence (monthly vs. annual).
+notes: >-
+  Per-developer prices and plan inclusions are subject to change; verify against
+  the CodeRabbit pricing page during reconciliation.
+sources:
+- https://www.coderabbit.ai/pricing
+- https://docs.coderabbit.ai/management/plans
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: CodeRabbit
+serviceCategory: Developer Tools
+billingModel:
+  pricingCategory: Subscription-Based
+  billingFrequency: Monthly or Annual
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Adjustment
+focusColumns:
+  ServiceName: CodeRabbit
+  ServiceCategory: Developer Tools
+  ProviderName: CodeRabbit
+  PublisherName: CodeRabbit
+  InvoiceIssuerName: CodeRabbit
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription-Based
+meters:
+- name: contributing_developers
+  description: >-
+    Count of contributing developers (those who open pull requests) billed per
+    seat per month or year on the chosen plan.
+  unit: developers
+  aggregation: max
+  dimensions:
+  - account
+  - plan
+  - organization
+- name: plan_subscription
+  description: Active subscription tier (Free, Lite, Pro, Enterprise) per organization.
+  unit: subscription
+  aggregation: max
+  dimensions:
+  - account
+  - plan
+principles:
+- name: Visibility
+  description: Track the count of contributing developers per organization and map to seats billed.
+- name: Allocation
+  description: Allocate per-developer seat cost to teams and repositories that generate pull requests.
+- name: Optimization
+  description: Use the free public-repo tier and the Free plan where adequate; right-size Lite vs. Pro to feature needs; favor annual billing for discount.
+- name: Accountability
+  description: Review active contributing-developer counts monthly and reconcile against billed seats.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

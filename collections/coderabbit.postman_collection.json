@@ -1,0 +1,148 @@
+{
+  "item": [
+    {
+      "id": "b1f2c3d4-1111-4a2b-8c3d-0a1b2c3d4e5f",
+      "name": "Reports",
+      "description": {
+        "content": "On-demand developer activity report generation.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c2e3f4a5-2222-4b3c-9d4e-1b2c3d4e5f6a",
+          "name": "Generate a developer activity report.",
+          "request": {
+            "name": "Generate a developer activity report.",
+            "description": {
+              "content": "Generates a developer activity report based on the provided parameters and date range. This endpoint is marked DEPRECATED and may take up to 10 minutes to respond depending on the volume of data.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "api",
+                "v1",
+                "report.generate"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "x-coderabbitai-api-key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"from\": \"2024-05-01\",\n  \"to\": \"2024-05-15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d3f4a5b6-3333-4c4d-ae5f-2c3d4e5f6a7b",
+              "name": "OK",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "api",
+                    "v1",
+                    "report.generate"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "x-coderabbitai-api-key",
+                    "value": "{{apiKey}}"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"from\": \"2024-05-01\",\n  \"to\": \"2024-05-15\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"report\": \"<string>\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.coderabbit.ai",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "x-coderabbitai-api-key"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "a0b1c2d3-4444-4e5f-b061-3d4e5f6a7b8c",
+    "name": "CodeRabbit API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "REST API for CodeRabbit, the AI-powered code review platform. The documented public surface is on-demand developer activity report generation, authenticated with the x-coderabbitai-api-key header.\n\nContact Support:\n Name: CodeRabbit Support\n URL: https://docs.coderabbit.ai",
+      "type": "text/plain"
+    }
+  }
+}

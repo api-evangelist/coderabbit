@@ -1,0 +1,135 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: CodeRabbit
+providerId: coderabbit
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: true
+tags:
+- AI
+- Code Review
+- Developer Tools
+- Pull Requests
+- DevOps
+- Plans
+description: >-
+  CodeRabbit prices per contributing developer (developers who open pull
+  requests), with a permanently free tier, paid Lite and Pro per-developer
+  subscriptions, and a custom-priced Enterprise plan. CodeRabbit Pro is free
+  forever for public repositories. Paid plans are billed monthly or annually,
+  with annual pricing discounted versus monthly.
+notes: >-
+  Representative per-developer prices as published on the CodeRabbit pricing
+  page; verify current tiers, limits, and feature inclusions on the pricing
+  page during reconciliation.
+sources:
+- https://www.coderabbit.ai/pricing
+- https://docs.coderabbit.ai/management/plans
+plans:
+- id: coderabbit-free
+  name: Free
+  type: free
+  description: >-
+    Permanently free plan with PR summaries, AI review comments, unlimited
+    public and private repositories, unlimited team members, and IDE and CLI
+    reviews, subject to hourly rate limits. Pro is free forever for public
+    repositories.
+  entries:
+  - label: Per Developer
+    name: free_seat
+    type: flat
+    metric: developer
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $0
+    userMultiplied: true
+  elements:
+  - name: PR Summaries
+  - name: AI Review Comments
+  - name: Unlimited Public and Private Repos
+  - name: Unlimited Team Members
+  - name: IDE and CLI Reviews
+- id: coderabbit-lite
+  name: Lite
+  type: subscription
+  description: >-
+    Entry-level paid plan billed per developer, adding higher review throughput
+    over the Free tier.
+  entries:
+  - label: Per Developer (monthly)
+    name: lite_seat
+    type: flat
+    metric: developer
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $12 per developer per month
+    userMultiplied: true
+  elements:
+  - name: PR Summaries
+  - name: AI Review Comments
+  - name: Line-by-Line Reviews
+- id: coderabbit-pro
+  name: Pro
+  type: subscription
+  description: >-
+    Full-featured paid plan billed per developer, unlocking autofix, 40+
+    integrated linters and analyzers, custom review instructions, and platform
+    integrations. Free forever for public repositories.
+  entries:
+  - label: Per Developer (annual)
+    name: pro_seat_annual
+    type: flat
+    metric: developer
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $24 per developer per month (billed annually)
+    userMultiplied: true
+  - label: Per Developer (monthly)
+    name: pro_seat_monthly
+    type: flat
+    metric: developer
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: $30 per developer per month (billed monthly)
+    userMultiplied: true
+  elements:
+  - name: Everything in Lite
+  - name: Autofix
+  - name: 40+ Linters and Analyzers
+  - name: Custom Review Instructions
+  - name: Platform Integrations
+  - name: Reports API Access
+- id: coderabbit-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom-priced plan adding self-hosting, SSO, audit logs, advanced security
+    and compliance controls, and SLA-backed support. Contact CodeRabbit sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Self-Hosting
+  - name: SSO
+  - name: Audit Logs
+  - name: SLA Support
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

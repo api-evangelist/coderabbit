@@ -1,0 +1,57 @@
+aid: coderabbit
+name: CodeRabbit
+review:
+  question: Does CodeRabbit expose a documented public WebSocket API?
+  answer: false
+  date: '2026-06-21'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was created. CodeRabbit's documented public REST
+    surface (POST /report.generate on https://api.coderabbit.ai/api/v1) is a
+    synchronous request/response endpoint. CodeRabbit's event-driven behavior
+    is delivered through Git provider app/webhook integrations (GitHub, GitLab,
+    Bitbucket, Azure DevOps), not through a CodeRabbit-hosted WebSocket or SSE
+    stream, so there is no asynchronous CodeRabbit transport to model.
+findings:
+  summary: |
+    CodeRabbit does not publish a documented public WebSocket API. The
+    documented REST surface is a single synchronous endpoint, POST
+    /report.generate, under https://api.coderabbit.ai/api/v1, authenticated
+    with the x-coderabbitai-api-key header. CodeRabbit operates primarily as a
+    Git application that subscribes to pull/merge request events from GitHub,
+    GitLab, Bitbucket, and Azure DevOps and posts reviews back via those
+    providers' APIs. No realtime, bidirectional, or streaming WebSocket
+    (ws:// or wss://) endpoint is documented.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://api.coderabbit.ai/api/v1
+      documented: true
+    - protocol: Git App / Webhooks
+      scheme: https
+      note: Event-driven integration via GitHub/GitLab/Bitbucket/Azure DevOps app installs; CodeRabbit consumes provider webhooks rather than exposing its own public webhook API.
+      documented: true
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented in CodeRabbit's API reference or platform documentation as of the review date.
+  endpointsConfirmedRest:
+    - POST https://api.coderabbit.ai/api/v1/report.generate
+  sources:
+    - url: https://docs.coderabbit.ai/api-reference/report-generate
+      type: APIReference
+      note: Documents POST /report.generate with x-coderabbitai-api-key auth; endpoint marked deprecated.
+    - url: https://docs.coderabbit.ai/platforms/
+      type: Documentation
+      note: Describes Git provider app integrations; no WebSocket surface mentioned.
+    - url: https://docs.coderabbit.ai/getting-started/configure-coderabbit
+      type: Documentation
+      note: Per-repo behavior configured via .coderabbit.yaml; no realtime transport documented.
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket protocol surface exists and no CodeRabbit-hosted asynchronous
+    stream (SSE or WebSocket) is documented. The only documented public REST
+    endpoint (report.generate) was modeled in openapi/coderabbit-openapi.yml.

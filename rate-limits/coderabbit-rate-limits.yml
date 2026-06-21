@@ -1,0 +1,63 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: CodeRabbit
+providerId: coderabbit
+created: '2026-06-21'
+modified: '2026-06-21'
+reconciled: false
+tags:
+- AI
+- Code Review
+- Developer Tools
+- Pull Requests
+- DevOps
+- Rate Limiting
+- Quotas
+- Throttling
+description: >-
+  CodeRabbit enforces review rate limits per account/plan rather than classic
+  per-second API quotas. The Free tier is rate-limited to roughly 200 files and
+  around 4 pull request reviews per hour; paid tiers raise these limits. The
+  REST Reports API returns 429 when throttled, and the deprecated
+  report.generate endpoint may take up to 10 minutes to respond depending on
+  data volume. Specific paid-tier limits are not reconciled in this artifact.
+notes: >-
+  Verify per-plan review limits on the CodeRabbit pricing and plans pages during
+  reconciliation; review limits change as accounts move between Free, Lite, Pro,
+  and Enterprise tiers.
+sources:
+- https://www.coderabbit.ai/pricing
+- https://docs.coderabbit.ai/management/plans
+- https://docs.coderabbit.ai/api-reference/report-generate
+responseCodes:
+  throttled: 429
+limits:
+- name: Free Tier Files Per Hour
+  scope: account
+  metric: files
+  limit: ~200 per hour
+  notes: Approximate Free-tier review limit on files processed per hour.
+- name: Free Tier PR Reviews Per Hour
+  scope: account
+  metric: reviews
+  limit: ~4 per hour
+  notes: Approximate Free-tier limit on pull request reviews per hour.
+- name: Paid Tier Review Limits
+  scope: account
+  metric: reviews
+  limit: see provider documentation
+  notes: Lite, Pro, and Enterprise raise review throughput; values vary by plan.
+- name: Reports API Generation
+  scope: account
+  metric: requests
+  limit: see provider documentation
+  notes: report.generate may take up to 10 minutes to respond; returns 429 when throttled.
+policies:
+- name: Tiered Limits
+  description: Review limits raise as accounts move from Free to Lite, Pro, and Enterprise.
+- name: Backoff Strategy
+  description: Clients should implement exponential backoff with jitter on 429 responses.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
