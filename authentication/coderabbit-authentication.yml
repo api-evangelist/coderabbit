@@ -1,0 +1,17 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/coderabbit-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: x-coderabbitai-api-key
+  description: CodeRabbit API key (format cr-xxxxxxxxxx), generated from the CodeRabbit organization
+    settings and passed in the x-coderabbitai-api-key header.
+  sources:
+  - openapi/coderabbit-openapi.yml

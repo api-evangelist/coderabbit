@@ -78,6 +78,12 @@ apis:
     against a published JSON schema) controlling review tone, path filters, enabled
     tools/linters, auto-review, and chat behavior.
 common:
+- type: VulnerabilityDisclosure
+  url: security/coderabbit-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/coderabbit-domain-security.yml
+- type: Authentication
+  url: authentication/coderabbit-authentication.yml
 - type: GitHubOrganization
   url: https://github.com/coderabbitai
 - type: LinkedIn
@@ -92,6 +98,8 @@ common:
   url: rate-limits/coderabbit-rate-limits.yml
 - type: FinOps
   url: finops/coderabbit-finops.yml
+- url: https://www.coderabbit.ai/feed
+  type: Blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
