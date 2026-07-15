@@ -78,6 +78,8 @@ apis:
     against a published JSON schema) controlling review tone, path filters, enabled
     tools/linters, auto-review, and chat behavior.
 common:
+- type: AgenticAccess
+  url: agentic-access/coderabbit-agentic-access.yml
 - type: VulnerabilityDisclosure
   url: security/coderabbit-vulnerability-disclosure.yml
 - type: DomainSecurity
