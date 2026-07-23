@@ -1,35 +1,27 @@
 openapi: 3.0.1
 info:
-  title: CodeRabbit API
-  description: >-
-    REST API for CodeRabbit, the AI-powered code review platform. The documented
-    public surface is the on-demand developer activity report generation endpoint.
-    Requests are authenticated with an API key passed in the x-coderabbitai-api-key
-    header. The report.generate endpoint is marked deprecated in CodeRabbit's
-    documentation and may take up to 10 minutes to respond depending on data volume.
+  title: CodeRabbit Reports API
+  description: REST API for CodeRabbit, the AI-powered code review platform. The documented public surface is the on-demand developer activity report generation endpoint. Requests are authenticated with an API key passed in the x-coderabbitai-api-key header. The report.generate endpoint is marked deprecated in CodeRabbit's documentation and may take up to 10 minutes to respond depending on data volume.
   termsOfService: https://www.coderabbit.ai/terms-of-service
   contact:
     name: CodeRabbit Support
     url: https://docs.coderabbit.ai
   version: '1.0'
 servers:
-  - url: https://api.coderabbit.ai/api/v1
-    description: CodeRabbit REST API v1
+- url: https://api.coderabbit.ai/api/v1
+  description: CodeRabbit REST API v1
 security:
-  - apiKeyAuth: []
+- apiKeyAuth: []
+tags:
+- name: Reports
 paths:
   /report.generate:
     post:
       operationId: generateReport
       tags:
-        - Reports
+      - Reports
       summary: Generate an on-demand developer activity report.
-      description: >-
-        Generates a developer activity report based on the provided parameters and
-        date range. This endpoint is marked DEPRECATED in CodeRabbit's documentation,
-        cannot use custom prompts in production, and may take up to 10 minutes to
-        respond depending on the volume of data. CodeRabbit recommends creating a
-        recurring report and triggering a preview via the UI instead.
+      description: Generates a developer activity report based on the provided parameters and date range. This endpoint is marked DEPRECATED in CodeRabbit's documentation, cannot use custom prompts in production, and may take up to 10 minutes to respond depending on the volume of data. CodeRabbit recommends creating a recurring report and triggering a preview via the UI instead.
       requestBody:
         required: true
         content:
@@ -53,20 +45,12 @@ paths:
         '429':
           description: Too Many Requests - rate limit exceeded.
 components:
-  securitySchemes:
-    apiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-coderabbitai-api-key
-      description: >-
-        CodeRabbit API key (format cr-xxxxxxxxxx), generated from the CodeRabbit
-        organization settings and passed in the x-coderabbitai-api-key header.
   schemas:
     GenerateReportRequest:
       type: object
       required:
-        - from
-        - to
+      - from
+      - to
       properties:
         from:
           type: string
@@ -81,20 +65,18 @@ components:
         scheduleRange:
           type: string
           enum:
-            - Dates
+          - Dates
           description: Schedule range type for the report.
         prompt:
           type: string
-          description: >-
-            Custom report content specification. Documented as for testing only;
-            not usable in production reports.
+          description: Custom report content specification. Documented as for testing only; not usable in production reports.
         promptTemplate:
           type: string
           enum:
-            - Daily Standup Report
-            - Sprint Report
-            - Release Notes
-            - Custom
+          - Daily Standup Report
+          - Sprint Report
+          - Release Notes
+          - Custom
           description: Predefined prompt template controlling report structure.
         parameters:
           type: array
@@ -126,10 +108,14 @@ components:
           description: One or more values to match.
     GenerateReportResponse:
       type: object
-      description: >-
-        Generated report payload. The response contains the rendered report content
-        for the requested date range and parameters.
+      description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
       properties:
         report:
           type: string
           description: The rendered developer activity report content.
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: CodeRabbit API key (format cr-xxxxxxxxxx), generated from the CodeRabbit organization settings and passed in the x-coderabbitai-api-key header.
