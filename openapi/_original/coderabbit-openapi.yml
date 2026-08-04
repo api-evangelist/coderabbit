@@ -1,0 +1,135 @@
+openapi: 3.0.1
+info:
+  title: CodeRabbit API
+  description: >-
+    REST API for CodeRabbit, the AI-powered code review platform. The documented
+    public surface is the on-demand developer activity report generation endpoint.
+    Requests are authenticated with an API key passed in the x-coderabbitai-api-key
+    header. The report.generate endpoint is marked deprecated in CodeRabbit's
+    documentation and may take up to 10 minutes to respond depending on data volume.
+  termsOfService: https://www.coderabbit.ai/terms-of-service
+  contact:
+    name: CodeRabbit Support
+    url: https://docs.coderabbit.ai
+  version: '1.0'
+servers:
+  - url: https://api.coderabbit.ai/api/v1
+    description: CodeRabbit REST API v1
+security:
+  - apiKeyAuth: []
+paths:
+  /report.generate:
+    post:
+      operationId: generateReport
+      tags:
+        - Reports
+      summary: Generate an on-demand developer activity report.
+      description: >-
+        Generates a developer activity report based on the provided parameters and
+        date range. This endpoint is marked DEPRECATED in CodeRabbit's documentation,
+        cannot use custom prompts in production, and may take up to 10 minutes to
+        respond depending on the volume of data. CodeRabbit recommends creating a
+        recurring report and triggering a preview via the UI instead.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateReportRequest'
+            example:
+              from: '2024-05-01'
+              to: '2024-05-15'
+      responses:
+        '200':
+          description: Report generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateReportResponse'
+        '400':
+          description: Bad request - invalid parameters.
+        '401':
+          description: Unauthorized - missing or invalid x-coderabbitai-api-key.
+        '429':
+          description: Too Many Requests - rate limit exceeded.
+components:
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: >-
+        CodeRabbit API key (format cr-xxxxxxxxxx), generated from the CodeRabbit
+        organization settings and passed in the x-coderabbitai-api-key header.
+  schemas:
+    GenerateReportRequest:
+      type: object
+      required:
+        - from
+        - to
+      properties:
+        from:
+          type: string
+          format: date
+          description: Start date of the report range in ISO 8601 (YYYY-MM-DD) format.
+          example: '2024-05-01'
+        to:
+          type: string
+          format: date
+          description: End date of the report range in ISO 8601 (YYYY-MM-DD) format.
+          example: '2024-05-15'
+        scheduleRange:
+          type: string
+          enum:
+            - Dates
+          description: Schedule range type for the report.
+        prompt:
+          type: string
+          description: >-
+            Custom report content specification. Documented as for testing only;
+            not usable in production reports.
+        promptTemplate:
+          type: string
+          enum:
+            - Daily Standup Report
+            - Sprint Report
+            - Release Notes
+            - Custom
+          description: Predefined prompt template controlling report structure.
+        parameters:
+          type: array
+          description: Filter objects applied to the report data set.
+          items:
+            $ref: '#/components/schemas/ReportParameter'
+        groupBy:
+          type: string
+          description: Primary grouping dimension for the report.
+        subgroupBy:
+          type: string
+          description: Secondary grouping dimension for the report.
+        orgId:
+          type: string
+          description: Organization identifier scoping the report.
+    ReportParameter:
+      type: object
+      properties:
+        parameter:
+          type: string
+          description: The field to filter on.
+        operator:
+          type: string
+          description: The comparison operator applied to the field.
+        values:
+          type: array
+          items:
+            type: string
+          description: One or more values to match.
+    GenerateReportResponse:
+      type: object
+      description: >-
+        Generated report payload. The response contains the rendered report content
+        for the requested date range and parameters.
+      properties:
+        report:
+          type: string
+          description: The rendered developer activity report content.

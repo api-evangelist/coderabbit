@@ -1,0 +1,14 @@
+{
+  "provider": "coderabbit",
+  "sources": [
+    "coderabbit-reports-api-openapi.yml"
+  ],
+  "outputs": [
+    "coderabbit-reports-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
