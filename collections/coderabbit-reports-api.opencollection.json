@@ -1,0 +1,41 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "CodeRabbit Reports API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "x-coderabbitai-api-key",
+      "value": "{{x-coderabbitai-api-key}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Reports",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate an on-demand developer activity report.",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.coderabbit.ai/api/v1/report.generate",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Generates a developer activity report based on the provided parameters and date range. This endpoint is marked DEPRECATED in CodeRabbit's documentation, cannot use custom prompts in production, and may take up to 10 minutes to respond depending on the volume of data. CodeRabbit recommends creating a recurring report and triggering a preview via the UI instead."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
