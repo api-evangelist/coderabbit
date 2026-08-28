@@ -7,6 +7,18 @@ description: CodeRabbit is an AI-powered code review platform that installs as a
   reviews and summaries on pull requests, plus IDE and CLI reviews. It exposes a REST
   API for on-demand developer activity report generation and is configured per-repository
   with a .coderabbit.yaml file.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
