@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.2.0
 info:
   title: CodeRabbit Reports API
   description: REST API for CodeRabbit, the AI-powered code review platform. The documented public surface is the on-demand developer activity report generation endpoint. Requests are authenticated with an API key passed in the x-coderabbitai-api-key header. The report.generate endpoint is marked deprecated in CodeRabbit's documentation and may take up to 10 minutes to respond depending on data volume.
@@ -20,7 +20,7 @@ paths:
       operationId: generateReport
       tags:
       - Reports
-      summary: Generate an on-demand developer activity report.
+      summary: Generate an on-demand developer activity report
       description: Generates a developer activity report based on the provided parameters and date range. This endpoint is marked DEPRECATED in CodeRabbit's documentation, cannot use custom prompts in production, and may take up to 10 minutes to respond depending on the volume of data. CodeRabbit recommends creating a recurring report and triggering a preview via the UI instead.
       requestBody:
         required: true
@@ -46,6 +46,20 @@ paths:
           description: Too Many Requests - rate limit exceeded.
 components:
   schemas:
+    ReportParameter:
+      type: object
+      properties:
+        parameter:
+          type: string
+          description: The field to filter on.
+        operator:
+          type: string
+          description: The comparison operator applied to the field.
+        values:
+          type: array
+          items:
+            type: string
+          description: One or more values to match.
     GenerateReportRequest:
       type: object
       required:
@@ -92,20 +106,6 @@ components:
         orgId:
           type: string
           description: Organization identifier scoping the report.
-    ReportParameter:
-      type: object
-      properties:
-        parameter:
-          type: string
-          description: The field to filter on.
-        operator:
-          type: string
-          description: The comparison operator applied to the field.
-        values:
-          type: array
-          items:
-            type: string
-          description: One or more values to match.
     GenerateReportResponse:
       type: object
       description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
