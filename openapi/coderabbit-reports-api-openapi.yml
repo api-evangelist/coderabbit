@@ -60,13 +60,6 @@ components:
           items:
             type: string
           description: One or more values to match.
-    GenerateReportResponse:
-      type: object
-      description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
-      properties:
-        report:
-          type: string
-          description: The rendered developer activity report content.
     GenerateReportRequest:
       type: object
       required:
@@ -113,6 +106,13 @@ components:
         orgId:
           type: string
           description: Organization identifier scoping the report.
+    GenerateReportResponse:
+      type: object
+      description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
+      properties:
+        report:
+          type: string
+          description: The rendered developer activity report content.
   securitySchemes:
     apiKeyAuth:
       type: apiKey
