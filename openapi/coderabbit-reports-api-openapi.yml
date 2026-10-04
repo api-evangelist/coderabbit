@@ -46,20 +46,13 @@ paths:
           description: Too Many Requests - rate limit exceeded.
 components:
   schemas:
-    ReportParameter:
+    GenerateReportResponse:
       type: object
+      description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
       properties:
-        parameter:
+        report:
           type: string
-          description: The field to filter on.
-        operator:
-          type: string
-          description: The comparison operator applied to the field.
-        values:
-          type: array
-          items:
-            type: string
-          description: One or more values to match.
+          description: The rendered developer activity report content.
     GenerateReportRequest:
       type: object
       required:
@@ -106,13 +99,20 @@ components:
         orgId:
           type: string
           description: Organization identifier scoping the report.
-    GenerateReportResponse:
+    ReportParameter:
       type: object
-      description: Generated report payload. The response contains the rendered report content for the requested date range and parameters.
       properties:
-        report:
+        parameter:
           type: string
-          description: The rendered developer activity report content.
+          description: The field to filter on.
+        operator:
+          type: string
+          description: The comparison operator applied to the field.
+        values:
+          type: array
+          items:
+            type: string
+          description: One or more values to match.
   securitySchemes:
     apiKeyAuth:
       type: apiKey
