@@ -1,135 +1,174 @@
-specification: API Commons Plans
-specificationVersion: '0.1'
-schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
-provider: CodeRabbit
-providerId: coderabbit
-created: '2026-06-21'
-modified: '2026-06-21'
-reconciled: true
-tags:
-- AI
-- Code Review
-- Developer Tools
-- Pull Requests
-- DevOps
-- Plans
-description: >-
-  CodeRabbit prices per contributing developer (developers who open pull
-  requests), with a permanently free tier, paid Lite and Pro per-developer
-  subscriptions, and a custom-priced Enterprise plan. CodeRabbit Pro is free
-  forever for public repositories. Paid plans are billed monthly or annually,
-  with annual pricing discounted versus monthly.
-notes: >-
-  Representative per-developer prices as published on the CodeRabbit pricing
-  page; verify current tiers, limits, and feature inclusions on the pricing
-  page during reconciliation.
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-07'
+method: searched
+source: https://www.coderabbit.ai/pricing
 sources:
 - https://www.coderabbit.ai/pricing
-- https://docs.coderabbit.ai/management/plans
+provenance:
+  tool: all/0-working/economics/harvest_pricing.py
+  run: 20261007T112025
+  grounding: every price_text was found verbatim in the fetched page text
+audience: business-product
+pricing_basis: per-seat
+delivery:
+  delivery: managed+licensed
+  method: page
+  read: '2026-10-07'
+  evidence: Self-hosting option
+  managed_tier: Essentials
+published: true
+note: Annual pricing shown by default (Save 20%); monthly prices stated in FAQ. Free open-source plan
+  for public repositories mentioned in FAQ; Enterprise includes a self-hosting option.
+plan_count: 9
+currency: USD
 plans:
-- id: coderabbit-free
-  name: Free
-  type: free
-  description: >-
-    Permanently free plan with PR summaries, AI review comments, unlimited
-    public and private repositories, unlimited team members, and IDE and CLI
-    reviews, subject to hourly rate limits. Pro is free forever for public
-    repositories.
-  entries:
-  - label: Per Developer
-    name: free_seat
-    type: flat
-    metric: developer
-    limit: -1
-    timeFrame: month
-    geo: global
-    unit: 1
-    price: $0
-    userMultiplied: true
-  elements:
-  - name: PR Summaries
-  - name: AI Review Comments
-  - name: Unlimited Public and Private Repos
-  - name: Unlimited Team Members
-  - name: IDE and CLI Reviews
-- id: coderabbit-lite
-  name: Lite
-  type: subscription
-  description: >-
-    Entry-level paid plan billed per developer, adding higher review throughput
-    over the Free tier.
-  entries:
-  - label: Per Developer (monthly)
-    name: lite_seat
-    type: flat
-    metric: developer
-    limit: -1
-    timeFrame: month
-    geo: global
-    unit: 1
-    price: $12 per developer per month
-    userMultiplied: true
-  elements:
-  - name: PR Summaries
-  - name: AI Review Comments
-  - name: Line-by-Line Reviews
-- id: coderabbit-pro
-  name: Pro
-  type: subscription
-  description: >-
-    Full-featured paid plan billed per developer, unlocking autofix, 40+
-    integrated linters and analyzers, custom review instructions, and platform
-    integrations. Free forever for public repositories.
-  entries:
-  - label: Per Developer (annual)
-    name: pro_seat_annual
-    type: flat
-    metric: developer
-    limit: -1
-    timeFrame: month
-    geo: global
-    unit: 1
-    price: $24 per developer per month (billed annually)
-    userMultiplied: true
-  - label: Per Developer (monthly)
-    name: pro_seat_monthly
-    type: flat
-    metric: developer
-    limit: -1
-    timeFrame: month
-    geo: global
-    unit: 1
-    price: $30 per developer per month (billed monthly)
-    userMultiplied: true
-  elements:
-  - name: Everything in Lite
-  - name: Autofix
-  - name: 40+ Linters and Analyzers
-  - name: Custom Review Instructions
-  - name: Platform Integrations
-  - name: Reports API Access
-- id: coderabbit-enterprise
-  name: Enterprise
-  type: enterprise
-  description: >-
-    Custom-priced plan adding self-hosting, SSO, audit logs, advanced security
-    and compliance controls, and SLA-backed support. Contact CodeRabbit sales.
-  entries:
-  - label: Enterprise Agreement
-    name: enterprise
-    type: flat
-    metric: contract
-    limit: -1
-    timeFrame: year
-    geo: global
-    unit: 1
-    price: contact sales
-    userMultiplied: false
-  elements:
-  - name: Self-Hosting
-  - name: SSO
-  - name: Audit Logs
-  - name: SLA Support
-maintainers:
-- FN: Kin Lane
-  email: kin@apievangelist.com
+- name: Essentials
+  price_text: $24 / developer / month
+  price: 24
+  currency: USD
+  period: month
+  unit: developer
+  included_quota: Agentic AI reviews on PRs & CLI, 5 MCP connections, 1 multi-repo analysis, built-in
+    pre-merge checks, agentic chat, linters/SAST, Jira and Linear integrations
+  overage: 'Reviews beyond included limits: Pay as you go† — $0.25 per reviewed file'
+- name: Team
+  price_text: $48 / developer / month
+  price: 48
+  currency: USD
+  period: month
+  unit: developer
+  included_quota: All Essentials features, Triage, 10 MCP connections, 5 multi-repo analysis, 10 custom
+    pre-merge checks, finishing touches, post-merge actions
+  overage: Pay as you go†
+- name: Advanced
+  price_text: $72 / developer / month
+  price: 72
+  currency: USD
+  period: month
+  unit: developer
+  included_quota: Everything in Team, blast radius and architectural impact analysis, security review
+    of every PR, continuous security monitoring, 15 MCP connections, 10 multi-repo
+  overage: Pay as you go†
+- name: Enterprise
+  price_text: Custom
+  period: none
+  included_quota: All Advanced features, custom RBAC, SSO, audit logging, API access, self-hosting option,
+    SLA support
+  overage: Contact sales
+- name: Essentials (monthly)
+  price_text: $30 per developer per month
+  price: 30
+  currency: USD
+  period: month
+  unit: developer
+- name: Team (monthly)
+  price_text: $60 per developer per month
+  price: 60
+  currency: USD
+  period: month
+  unit: developer
+- name: CodeRabbit Agent
+  price_text: $0.40 per agent minute
+  price: 0.4
+  currency: USD
+  period: per-use
+  unit: agent minute
+  included_quota: Trial and free minutes are used before paid usage
+  overage: Set a monthly spending cap
+- name: CodeRabbit Security Scan
+  price_text: Variable, usage-based pricing
+  period: per-use
+  unit: scan
+  included_quota: Scan your full codebase
+- name: Usage-based reviews
+  price_text: $0.25 per reviewed file
+  price: 0.25
+  currency: USD
+  period: per-use
+  unit: reviewed file
+rate_limit_statements:
+- 'Rate limits: PR reviews per developer per hour 5* 8* 10* 12*'
+- '* Subject to Fair Usage Policy'
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  - seat
+  - subscription
+  units:
+  - compute
+  - seat
+  plans:
+  - name: Essentials
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Team
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Advanced
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Enterprise
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - none
+  - name: Essentials (monthly)
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Team (monthly)
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: CodeRabbit Agent
+    access: other
+    model: hybrid
+    model_how: derived
+    units:
+    - compute
+    periods:
+    - other
+  - name: CodeRabbit Security Scan
+    access: other
+    model: unstated
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
+  - name: Usage-based reviews
+    access: other
+    model: subscription
+    model_how: derived
+    units:
+    - other
+    periods:
+    - other
