@@ -1,0 +1,326 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Security API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Security
+paths:
+  /v1/security/scans/code:
+    x-generated: true
+    get:
+      operationId: security-scans-code-list
+      summary: List or export AI Deep Scan code findings
+      description: Returns cursor-paginated JSON by default. CSV and SARIF formats download the complete repository/scan inventory (up to 50,000 records and 16 MB). Code findings include saved reachability evidence as raw call-stack strings and explanation text. The call-stack array may combine frames from multiple paths; an empty array means no stack was captured, not that the finding is unreachable. Available on all plans with a non-agentic API key and security:read permission. No Security add-on or trial is required. Other APIs retain their existing plan requirements. JSON rows may include scan_provenance with saved scope and evidenceStatus not_loaded. CSV scan_provenance contains compact scanId, primary repositoryId/revision, selectedContextRepositoryIds, and evidenceStatus. SARIF result properties.scanProvenance contains the full provenance, including available evidence. Context repositories do not own findings or coverage.
+      tags:
+      - Security
+      parameters:
+      - $ref: '#/components/parameters/SecurityOrgId'
+      - $ref: '#/components/parameters/SecurityRepoId'
+      - $ref: '#/components/parameters/SecurityScanId'
+      - $ref: '#/components/parameters/SecurityCodeState'
+      - $ref: '#/components/parameters/SecurityLimit'
+      - $ref: '#/components/parameters/SecurityCursor'
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - csv
+          - sarif
+          default: json
+      responses:
+        '200':
+          description: Paginated JSON or a full-inventory download.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - next_cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SecurityCodeFinding'
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/sarif+json:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid parameter or cursor.
+        '401':
+          description: Invalid or inactive API key.
+        '403':
+          description: Forbidden key type, missing security:read, or repository outside scope.
+        '410':
+          description: Legacy organization API keys are no longer accepted.
+        '413':
+          description: More than 50,000 records or more than 16 MB. Narrow with repo_id or scan_id.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: Internal server error.
+components:
+  schemas:
+    SecurityCodeFinding:
+      type: object
+      required:
+      - id
+      - organization_id
+      - organization_name
+      - repository_id
+      - repository_name
+      - severity
+      - state
+      - cwe
+      - description
+      - reachability_call_stack
+      - file_path
+      - start_line
+      - end_line
+      properties:
+        id:
+          type: string
+        organization_id:
+          type: string
+          description: Git-provider organization ID.
+        organization_name:
+          type: string
+        repository_id:
+          type: string
+          description: Git-provider repository ID.
+        repository_name:
+          type: string
+        severity:
+          type: string
+        state:
+          type: string
+          enum:
+          - open
+          - fixed
+          - dismissed
+        cwe:
+          type:
+          - string
+          - 'null'
+        description:
+          type: string
+          description: Saved finding explanation as raw text.
+        reachability_call_stack:
+          type: array
+          description: Stored human-readable reachability evidence captured for the finding. The array may combine and deduplicate frames from multiple paths, so it does not guarantee one source-to-sink order or a stable frame grammar. An empty array means no stack was captured; it does not mean the finding is unreachable.
+          items:
+            type: string
+        file_path:
+          type: string
+        start_line:
+          type: integer
+        end_line:
+          type: integer
+        scan_provenance:
+          $ref: '#/components/schemas/SecurityFindingProvenance'
+    SecurityProvenanceRepository:
+      type: object
+      required:
+      - repositoryId
+      - provider
+      - host
+      - revision
+      properties:
+        repositoryId:
+          type: string
+        provider:
+          type:
+          - string
+          - 'null'
+        host:
+          type:
+          - string
+          - 'null'
+        revision:
+          type:
+          - string
+          - 'null'
+    SecurityFindingProvenance:
+      type: object
+      description: 'Optional scan provenance. Nested fields use camelCase. Linked repositories provide context; finding ownership and coverage remain with the primary repository. Paginated JSON does not load evidence: evidenceStatus is not_loaded, supportingContext is null, and sourceFrames is empty.'
+      required:
+      - scanId
+      - scope
+      - evidenceStatus
+      - supportingContext
+      - sourceFrames
+      properties:
+        scanId:
+          type: string
+        contextCitations:
+          type: array
+          maxItems: 20
+          items:
+            type: object
+            required:
+            - repositoryId
+            - repository
+            - revision
+            - path
+            - startLine
+            - endLine
+            - url
+            properties:
+              repositoryId:
+                type: string
+              repository:
+                type: string
+              revision:
+                type: string
+                pattern: ^[a-fA-F0-9]{40}$
+              path:
+                type: string
+              startLine:
+                type:
+                - integer
+                - 'null'
+                minimum: 1
+              endLine:
+                type:
+                - integer
+                - 'null'
+                minimum: 1
+              url:
+                type: string
+                format: uri
+        scope:
+          type: object
+          required:
+          - primary
+          - selectedContext
+          - limitations
+          properties:
+            primary:
+              $ref: '#/components/schemas/SecurityProvenanceRepository'
+            selectedContext:
+              type: array
+              items:
+                $ref: '#/components/schemas/SecurityProvenanceRepository'
+            limitations:
+              type: array
+              items:
+                type: string
+        evidenceStatus:
+          type: string
+          enum:
+          - available
+          - unavailable
+          - not_loaded
+        supportingContext:
+          type:
+          - array
+          - 'null'
+          items:
+            $ref: '#/components/schemas/SecurityProvenanceRepository'
+        sourceFrames:
+          type: array
+          items:
+            allOf:
+            - $ref: '#/components/schemas/SecurityProvenanceRepository'
+            - type: object
+              required:
+              - evidenceId
+              - targetSnapshotId
+              - path
+              - startLine
+              - endLine
+              - contentHash
+              - role
+              - freshness
+              properties:
+                evidenceId:
+                  type: string
+                targetSnapshotId:
+                  type: string
+                path:
+                  type: string
+                startLine:
+                  type: integer
+                  minimum: 1
+                endLine:
+                  type: integer
+                  minimum: 1
+                contentHash:
+                  type: string
+                role:
+                  type: string
+                freshness:
+                  type: string
+  parameters:
+    SecurityLimit:
+      in: query
+      name: limit
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 1000
+      description: JSON pagination only.
+    SecurityCodeState:
+      in: query
+      name: state
+      required: false
+      schema:
+        type: string
+        enum:
+        - open
+        - fixed
+        - dismissed
+        - all
+        default: open
+    SecurityOrgId:
+      in: query
+      name: org_id
+      required: false
+      schema:
+        type: string
+      description: Git-provider organization ID for workspace API keys. Omit for the complete workspace scope.
+    SecurityScanId:
+      in: query
+      name: scan_id
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: Historical scan snapshot. By default each repository uses its latest completed scan.
+    SecurityRepoId:
+      in: query
+      name: repo_id
+      required: false
+      schema:
+        type: string
+      description: One exact Git-provider repository ID. It must belong to the authenticated organization scope; response items expose it as repository_id together with organization and repository names.
+    SecurityCursor:
+      in: query
+      name: cursor
+      required: false
+      schema:
+        type: string
+      description: Opaque next_cursor from the previous JSON response.
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

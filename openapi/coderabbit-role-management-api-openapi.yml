@@ -1,0 +1,256 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Role Management API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Role Management
+paths:
+  /v1/roles:
+    x-generated: true
+    get:
+      operationId: list-roles
+      summary: List organization roles
+      description: Lists built-in roles and Enterprise custom roles for the authenticated organization.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: query
+        name: org_id
+        schema:
+          type: string
+        description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+      - in: query
+        name: role_type
+        schema:
+          type: string
+          enum:
+          - all
+          - system
+          - custom
+          default: all
+        description: Optional role type filter.
+      - in: query
+        name: include_permissions
+        schema:
+          type: boolean
+          default: false
+      - in: query
+        name: include_user_count
+        schema:
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Successfully retrieved roles
+    post:
+      operationId: create-role
+      summary: Create a custom role
+      description: Creates an Enterprise custom role. If is_default is true, the new role becomes the subscription default and the previous default is cleared.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                org_id:
+                  type: string
+                  description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+                name:
+                  type: string
+                  example: Security Reviewer
+                description:
+                  type: string
+                is_default:
+                  type: boolean
+                  default: false
+                duplicate_from:
+                  type: string
+                  description: Role ID to copy permissions from. Defaults to cr_member when permissions are omitted.
+                permissions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      resource_id:
+                        type: string
+                        example: user_management
+                      access_type:
+                        type: string
+                        enum:
+                        - read
+                        - write
+                        - delete
+      responses:
+        '201':
+          description: Custom role created
+  /v1/roles/permissions:
+    x-generated: true
+    get:
+      operationId: list-role-permission-options
+      summary: List role permission options
+      description: Lists the valid resource_id and access_type values that can be used when creating or updating Enterprise custom roles.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: query
+        name: org_id
+        schema:
+          type: string
+        description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+      responses:
+        '200':
+          description: Successfully retrieved role permission options
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - resource_ids
+                - access_types
+                properties:
+                  resource_ids:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                    - repository_management
+                    - user_management
+                    - role_management
+                  access_types:
+                    type: array
+                    items:
+                      type: string
+                      enum:
+                      - read
+                      - write
+                      - delete
+                    example:
+                    - read
+                    - write
+                    - delete
+  /v1/roles/{roleId}:
+    x-generated: true
+    get:
+      operationId: get-role
+      summary: Get role details
+      description: Retrieves one built-in or Enterprise custom role.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: path
+        name: roleId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: org_id
+        schema:
+          type: string
+        description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+      - in: query
+        name: include_permissions
+        schema:
+          type: boolean
+          default: true
+      - in: query
+        name: include_user_count
+        schema:
+          type: boolean
+          default: true
+      responses:
+        '200':
+          description: Successfully retrieved role
+    patch:
+      operationId: update-role
+      summary: Update a custom role
+      description: Updates custom role metadata, permissions, or default status. System roles are immutable. Omitting is_default preserves the current default status; true clears any previous default; false unsets this role as default.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: path
+        name: roleId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                org_id:
+                  type: string
+                  description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+                name:
+                  type: string
+                description:
+                  type:
+                  - string
+                  - 'null'
+                is_default:
+                  type: boolean
+                permissions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      resource_id:
+                        type: string
+                      access_type:
+                        type: string
+                        enum:
+                        - read
+                        - write
+                        - delete
+      responses:
+        '200':
+          description: Custom role updated
+    delete:
+      operationId: delete-role
+      summary: Delete a custom role
+      description: Deletes an Enterprise custom role when it is not assigned to any organization members. System roles cannot be deleted.
+      tags:
+      - Role Management
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: path
+        name: roleId
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: org_id
+        schema:
+          type: string
+        description: 'Required when authenticating with a workspace-scoped API token: the git-provider organization id to target within the token''s workspace. Ignored for organization and self-hosted keys.'
+      responses:
+        '204':
+          description: Custom role deleted
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

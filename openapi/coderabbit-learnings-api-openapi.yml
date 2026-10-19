@@ -1,0 +1,293 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Learnings API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Learnings
+paths:
+  /v1/learnings:
+    x-generated: true
+    get:
+      operationId: learnings-list
+      summary: List learnings for an organization
+      description: Programmatic access to an organization's CodeRabbit learnings. Returns paginated JSON or a CSV download. Enterprise plan only. Mirrors the auth, rate-limit and response-size contract of the Metrics public API.
+      tags:
+      - Learnings
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: header
+        name: x-coderabbitai-api-key
+        required: true
+        schema:
+          type: string
+        description: API key for authentication
+      - in: query
+        name: org_id
+        required: false
+        schema:
+          type: string
+        description: Workspace-scoped API tokens only. When provided, scopes learnings to that single git-provider organization within the token's workspace; when omitted, aggregates every organization in the workspace. Ignored for organization and self-hosted keys.
+      - in: query
+        name: repository_ids
+        schema:
+          type: string
+          example: 1027529638,987654321
+        description: Comma-separated provider repository IDs (max 10).
+      - in: query
+        name: user_ids
+        schema:
+          type: string
+          example: 87397876,12345678
+        description: Comma-separated provider user IDs (max 10).
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Case-insensitive substring search over learning text.
+      - in: query
+        name: file_paths
+        schema:
+          type: string
+          example: src/api.ts,src/auth.ts
+        description: Comma-separated exact file paths (max 10).
+      - in: query
+        name: stat_filter
+        schema:
+          type: string
+          enum:
+          - total
+          - active
+          - never_used
+          - created_this_week
+          default: total
+        description: Filter by recent usage, zero usage, or creation in the last seven days.
+      - in: query
+        name: organization_ids
+        schema:
+          type: string
+          example: 184456712,103539130
+        description: Comma-separated provider organization IDs (max 10). Self-hosted instances only.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+        description: Maximum number of records to return.
+      - in: query
+        name: cursor
+        schema:
+          type: string
+        description: Pagination cursor returned as `next_cursor` on the previous page.
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - json
+          - csv
+          default: json
+        description: Response format. `json` (default) returns paginated JSON; `csv` returns a CSV download.
+      responses:
+        '200':
+          description: Successfully retrieved learnings.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - next_cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - learning
+                      - repository_name
+                      - author_username
+                      - created_at
+                      - updated_at
+                      - usage_count
+                      properties:
+                        id:
+                          type: string
+                          description: Unique identifier for the learning.
+                        learning:
+                          type: string
+                        organization_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Git provider organization ID.
+                        organization_name:
+                          type:
+                          - string
+                          - 'null'
+                        repository_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Git provider repository ID.
+                        repository_name:
+                          type: string
+                        author_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Git provider user ID of the learning author.
+                        author_username:
+                          type: string
+                        file:
+                          type:
+                          - string
+                          - 'null'
+                        source_url:
+                          type:
+                          - string
+                          - 'null'
+                          description: URL of the PR comment where the learning was captured.
+                        pull_request:
+                          type:
+                          - integer
+                          - 'null'
+                          description: Source pull request or merge request number.
+                        created_at:
+                          type: string
+                          format: date-time
+                        updated_at:
+                          type: string
+                          format: date-time
+                        usage_count:
+                          type: integer
+                        last_used_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+            text/csv:
+              schema:
+                type: string
+                format: binary
+                description: CSV file download.
+        '400':
+          description: Bad request — invalid parameters or cursor.
+        '401':
+          description: Unauthorized — invalid or inactive API key.
+        '403':
+          description: Forbidden — Enterprise plan required or agentic key not allowed.
+        '404':
+          description: Not found — self-hosted instance has no organizations matching the supplied `organization_ids`. Returned only for self-hosted callers when scope resolution narrows to an empty set.
+        '413':
+          description: Response exceeds 16 MB. Add filters or reduce `limit`.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: Internal server error.
+  /v1/learnings/{learning_id}:
+    x-generated: true
+    patch:
+      operationId: learnings-update
+      summary: Update a learning
+      description: Replaces canonical learning text and refreshes its LanceDB embedding. The text is trimmed and recognized credentials are redacted before persistence and indexing. Enterprise plan and learning:write permission required.
+      tags:
+      - Learnings
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: path
+        name: learning_id
+        required: true
+        schema:
+          type: string
+        description: Learning ID returned by GET /v1/learnings.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - learning
+              additionalProperties: false
+              properties:
+                org_id:
+                  type: string
+                  description: Required for workspace API keys; the git-provider organization ID to target. Ignored for organization keys.
+                learning:
+                  type: string
+                  minLength: 1
+      responses:
+        '204':
+          description: Learning updated and, when shared, reindexed.
+        '400':
+          description: Invalid learning ID, text, request body, or missing workspace org_id.
+        '401':
+          description: Invalid key or missing authenticated identity.
+        '403':
+          description: Enterprise plan or learning:write permission required; agentic keys are forbidden.
+        '404':
+          description: Learning not found in the target organization, or the organization is not in the workspace.
+        '410':
+          description: Legacy organization keys cannot update learnings.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: PostgreSQL, LanceDB, or internal service update failed.
+    delete:
+      operationId: learnings-delete
+      summary: Delete a learning
+      description: Idempotently deletes a canonical learning from PostgreSQL, the LanceDB knowledge index, and patterned-learning caches. Enterprise plan and learning:write permission required.
+      tags:
+      - Learnings
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: path
+        name: learning_id
+        required: true
+        schema:
+          type: string
+        description: Learning ID returned by GET /v1/learnings.
+      - in: query
+        name: org_id
+        required: false
+        schema:
+          type: string
+        description: Required for workspace API keys; the git-provider organization ID to target. Ignored for organization keys.
+      responses:
+        '204':
+          description: Learning deleted or already absent.
+        '400':
+          description: Invalid learning ID or missing workspace org_id.
+        '401':
+          description: Invalid key or missing authenticated identity.
+        '403':
+          description: Enterprise plan or learning:write permission required; agentic keys are forbidden.
+        '404':
+          description: The selected organization is not in the workspace.
+        '410':
+          description: Legacy organization keys cannot delete learnings.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: PostgreSQL, LanceDB, or internal service deletion failed.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

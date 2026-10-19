@@ -1,0 +1,213 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Report.generate API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Report.generate
+paths:
+  /api/v1/report.generate:
+    post:
+      operationId: report-generate
+      summary: Report generate
+      description: 'DEPRECATED: Generate a developer activity report based on the provided parameters and date range. This endpoint may take up to 10 minutes to respond depending on the data volume. Prompts cannot be used and this is only for testing purposes. We recommend creating a recurring report and triggering a preview via the UI instead.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                scheduleRange:
+                  type: string
+                  enum:
+                  - Dates
+                from:
+                  type: string
+                  format: date
+                  description: Start date for the report in ISO 8601 format (YYYY-MM-DD)
+                to:
+                  type: string
+                  format: date
+                  description: End date for the report in ISO 8601 format (YYYY-MM-DD)
+                prompt:
+                  type: string
+                  description: Custom prompt to specify what information should be included in the report and how it should be formatted
+                promptTemplate:
+                  type: string
+                  enum:
+                  - Daily Standup Report
+                  - Sprint Report
+                  - Release Notes
+                  - Custom
+                  description: Pre-defined template for the report format
+                parameters:
+                  type: array
+                  description: Array of filter parameters to narrow down the report scope
+                  items:
+                    type: object
+                    properties:
+                      parameter:
+                        type: string
+                        enum:
+                        - REPOSITORY
+                        - LABEL
+                        - TEAM
+                        - USER
+                        - SOURCEBRANCH
+                        - TARGETBRANCH
+                        - STATE
+                        description: Filter type
+                      operator:
+                        type: string
+                        enum:
+                        - IN
+                        - ALL
+                        - NOT_IN
+                        description: Filter operator
+                      values:
+                        type: array
+                        items:
+                          type: string
+                        description: Array of string values to filter by
+                    required:
+                    - parameter
+                    - operator
+                    - values
+                    additionalProperties: false
+                groupBy:
+                  type: string
+                  enum:
+                  - NONE
+                  - REPOSITORY
+                  - LABEL
+                  - TEAM
+                  - USER
+                  - SOURCEBRANCH
+                  - TARGETBRANCH
+                  - STATE
+                  description: Primary grouping for the report
+                subgroupBy:
+                  type: string
+                  enum:
+                  - NONE
+                  - REPOSITORY
+                  - LABEL
+                  - TEAM
+                  - USER
+                  - SOURCEBRANCH
+                  - TARGETBRANCH
+                  - STATE
+                  description: Secondary grouping for the report
+                orgId:
+                  type: string
+                  description: Organization ID (optional)
+              required:
+              - from
+              - to
+              additionalProperties: false
+            example:
+              from: '2024-05-01'
+              to: '2024-05-15'
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        allowEmptyValue: false
+        schema:
+          type: string
+        in: header
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    group:
+                      type: string
+                      description: The name of the report group
+                    report:
+                      type: string
+                      description: The formatted report content as a markdown string
+                  required:
+                  - group
+                  - report
+                  additionalProperties: false
+              example:
+              - group: Developer Activity
+                report: "*Developer Activity*:\n\n \U0001F7E2 **Update README.md** [#10](https://gitlab.com/master-group123/sub-group/project1/-/merge_requests/10)\n• Summary: The change updates the project description and modifies a section header for clearer instructions.\n• Last activity: 1 day ago, mergeable\n• Insights:\n - :magnifying_glass: @user2 Suggested updating the wording to make it clearer"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errors:
+                - code: INVALID_PARAMETER
+                  message: 'start_date: start_date is required'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Invalid or missing API key
+                code: UNAUTHORIZED
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: API access requires a Pro plan subscription
+                code: FORBIDDEN
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Rate limit exceeded. Please retry after 60 seconds.
+                code: RATE_LIMITED
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Report.generate
+      x-summary-source: derived
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+            required:
+            - code
+            - message
+      required:
+      - errors
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

@@ -1,0 +1,187 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Organizations API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Organizations
+paths:
+  /v1/organizations:
+    x-generated: true
+    get:
+      operationId: organizations-list
+      summary: List onboarded organizations
+      description: Lists active organizations in CodeRabbit. Organization API keys return their bound organization; workspace API keys return all active organizations in the workspace. Enterprise plan only.
+      tags:
+      - Organizations
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: header
+        name: x-coderabbitai-api-key
+        required: true
+        schema:
+          type: string
+        description: User-scoped organization or workspace API key.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+      - in: query
+        name: cursor
+        schema:
+          type: string
+        description: Opaque pagination cursor returned by the previous page.
+      responses:
+        '200':
+          description: Successfully listed onboarded organizations.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - organizations
+                - next_cursor
+                properties:
+                  organizations:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - id
+                      - name
+                      - provider
+                      - provider_organization_id
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: CodeRabbit organization ID used by nested organization endpoints.
+                        name:
+                          type: string
+                        provider:
+                          type: string
+                          example: github
+                        provider_organization_id:
+                          type: string
+                          description: Organization identifier assigned by the git provider.
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+        '400':
+          description: Invalid pagination parameters.
+        '401':
+          description: Invalid or inactive API key.
+        '403':
+          description: Enterprise plan, workspace administrator, key type, or RBAC requirement not met.
+        '410':
+          description: Legacy organization API key.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: Internal server error.
+  /v1/organizations/{organization_id}/repositories:
+    x-generated: true
+    get:
+      operationId: organization-repositories-list
+      summary: List onboarded repositories for an organization
+      description: Lists repositories that CodeRabbit currently records as active for an organization. The organization_id is the CodeRabbit organization UUID returned by GET /organizations. Enterprise plan only.
+      tags:
+      - Organizations
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: header
+        name: x-coderabbitai-api-key
+        required: true
+        schema:
+          type: string
+        description: User-scoped organization or workspace API key.
+      - in: path
+        name: organization_id
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+      - in: query
+        name: cursor
+        schema:
+          type: string
+        description: Opaque pagination cursor returned by the previous page.
+      responses:
+        '200':
+          description: Successfully listed onboarded repositories.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - repositories
+                - next_cursor
+                properties:
+                  repositories:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - repository_id
+                      - repository_name
+                      - private
+                      - group_path
+                      - is_installed
+                      properties:
+                        repository_id:
+                          type: string
+                          description: Repository identifier assigned by the git provider.
+                        repository_name:
+                          type: string
+                          example: acme/backend
+                        private:
+                          type: boolean
+                        group_path:
+                          type:
+                          - string
+                          - 'null'
+                          description: Git provider group or subgroup path, when available.
+                        is_installed:
+                          type: boolean
+                          description: Whether CodeRabbit's cached state records an active installation for the repository.
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+        '400':
+          description: Invalid organization ID or pagination parameters.
+        '401':
+          description: Invalid or inactive API key.
+        '403':
+          description: Enterprise plan, workspace administrator, key type, or RBAC requirement not met.
+        '404':
+          description: Organization not found in the API key scope.
+        '410':
+          description: Legacy organization API key.
+        '429':
+          description: Rate limit exceeded.
+        '500':
+          description: Internal server error.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

@@ -1,21 +1,40 @@
 {
   "provider": "coderabbit",
   "sources": [
-    "_original/coderabbit-openapi.yml"
+    "_original/coderabbit-openapi.json"
   ],
   "outputs": [
-    "coderabbit-reports-api-openapi.yml"
+    "coderabbit-audit-logs-api-openapi.yml",
+    "coderabbit-learnings-api-openapi.yml",
+    "coderabbit-metrics-api-openapi.yml",
+    "coderabbit-organizations-api-openapi.yml",
+    "coderabbit-report-generate-api-openapi.yml",
+    "coderabbit-role-management-api-openapi.yml",
+    "coderabbit-security-api-openapi.yml",
+    "coderabbit-users-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
-    "coderabbit-openapi.yml: upgraded openapi 3.0.1 -> OpenAPI 3.2.0",
-    "coderabbit-openapi.yml: declared missing tag: Reports",
-    "apis.yml register: already-registered"
+    "coderabbit-openapi.json: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "coderabbit-openapi.json: tagged paths POST /api/v1/report.generate -> Report.generate",
+    "coderabbit-openapi.json: tagged paths GET /v1/metrics/reviews -> Metrics",
+    "coderabbit-openapi.json: tagged paths GET /v1/users -> Users",
+    "coderabbit-openapi.json: tagged paths POST /v1/users/seats -> Users",
+    "coderabbit-openapi.json: tagged paths GET /v1/users/seats/assignment -> Users",
+    "coderabbit-openapi.json: tagged paths POST /v1/users/seats/assignment -> Users",
+    "coderabbit-openapi.json: tagged paths POST /v1/users/roles -> Users",
+    "coderabbit-openapi.json: declared missing tag: Audit Logs",
+    "coderabbit-openapi.json: declared missing tag: Learnings",
+    "coderabbit-openapi.json: declared missing tag: Metrics",
+    "coderabbit-openapi.json: declared missing tag: Organizations",
+    "coderabbit-openapi.json: declared missing tag: Report.generate",
+    "coderabbit-openapi.json: declared missing tag: Role Management",
+    "coderabbit-openapi.json: declared missing tag: Security",
+    "coderabbit-openapi.json: declared missing tag: Users",
+    "apis.yml register: written (+8 apis, 10 total)"
   ],
-  "skipped": [
-    "coderabbit-reports-api-openapi.yml: previously refined output, superseded by openapi/_original/"
-  ]
+  "skipped": []
 }

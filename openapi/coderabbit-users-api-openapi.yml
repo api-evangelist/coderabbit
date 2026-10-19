@@ -1,0 +1,959 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Users API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Users
+paths:
+  /v1/users:
+    get:
+      operationId: list-users
+      summary: Users
+      description: List all users in your organization with optional filtering by seat assignment and role status. Supports cursor-based pagination.
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl --request GET \\\n  --url 'https://api.coderabbit.ai/v1/users?seat_filter=all&role_filter=all&limit=100' \\\n  --header 'x-coderabbitai-api-key: <api-key>'"
+      - lang: Python
+        label: Python
+        source: 'import requests
+
+
+          url = ''https://api.coderabbit.ai/v1/users''
+
+
+          headers = {''x-coderabbitai-api-key'': ''<api-key>''}
+
+
+          params = {''seat_filter'': ''all'', ''role_filter'': ''all'', ''limit'': 100}
+
+
+          response = requests.get(url, headers=headers, params=params)
+
+
+          print(response.text)'
+      - lang: JavaScript
+        label: JavaScript
+        source: "const options = {method: 'GET', headers: {'x-coderabbitai-api-key': '<api-key>'}};\n\nfetch('https://api.coderabbit.ai/v1/users?seat_filter=all&role_filter=all&limit=100', options)\n  .then(res => res.json())\n  .then(res => console.log(res))\n  .catch(err => console.error(err));"
+      - lang: Go
+        label: Go
+        source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io\"\n)\n\nfunc main() {\n\n\turl := \"https://api.coderabbit.ai/v1/users?seat_filter=all&role_filter=all&limit=100\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"x-coderabbitai-api-key\", \"<api-key>\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := io.ReadAll(res.Body)\n\n\tfmt.Println(string(body))\n\n}"
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      - name: seat_filter
+        description: Filter users by seat assignment status
+        required: false
+        schema:
+          type: string
+          enum:
+          - all
+          - assigned
+          - unassigned
+          default: all
+        in: query
+      - name: role_filter
+        description: Filter users by role
+        required: false
+        schema:
+          type: string
+          enum:
+          - all
+          - member
+          - admin
+          default: all
+        in: query
+      - name: limit
+        description: Maximum number of users to return per page
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 100
+        in: query
+      - name: cursor
+        description: Pagination cursor from previous response's next_cursor field
+        required: false
+        schema:
+          type: string
+        in: query
+      responses:
+        '200':
+          description: List of users with seat and subscription info
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window (10)
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Requests remaining in current window
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  seats_purchased:
+                    type: integer
+                    description: Total number of seats purchased in the subscription
+                  seats_assigned:
+                    type: integer
+                    description: Number of seats currently assigned to users
+                  seat_assignment_mode:
+                    type: string
+                    enum:
+                    - automatic
+                    - manual
+                    description: The seat assignment mode for the organization
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+                    description: Cursor for the next page of results, or null if no more results
+                required:
+                - seats_purchased
+                - seats_assigned
+                - seat_assignment_mode
+                - users
+              example:
+                seats_purchased: 50
+                seats_assigned: 30
+                seat_assignment_mode: manual
+                users:
+                - user_id: '121358802'
+                  seat_assigned: true
+                  role: cr_admin
+                - user_id: '22605247'
+                  seat_assigned: false
+                  role: cr_member
+                next_cursor: MjI2MDUyNDc=
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              examples:
+                invalid_filter:
+                  summary: Invalid filter value
+                  value:
+                    error:
+                      code: INVALID_REQUEST
+                      message: 'Invalid seat_filter. Must be one of: "all", "assigned", "unassigned"'
+                invalid_cursor:
+                  summary: Invalid cursor format
+                  value:
+                    error:
+                      code: INVALID_REQUEST
+                      message: Invalid cursor format
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or inactive API key
+        '403':
+          description: Forbidden - Not an admin or missing Enterprise plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: NOT_ADMIN
+                  message: Only administrators can perform seat management operations
+        '410':
+          description: Legacy API key - deprecated and no longer supported for user management
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: LEGACY_API_KEY
+                  message: You are using a legacy API key. We are deprecating use of legacy keys. Regenerate a new API key and retry the request.
+        '429':
+          description: Rate limit exceeded (10 requests per 60 seconds per organization)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: RATE_LIMIT_EXCEEDED
+                  message: Rate limit exceeded. Max 10 requests per 60 seconds
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Always 0 when rate limited
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error while listing users
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Users
+  /v1/users/seats:
+    post:
+      operationId: manage-seats
+      summary: Seats
+      description: Bulk assign or unassign seats for up to 500 users. The request format depends on the type of API key used. **Organization and self-hosted instance API keys** address users by provider user ID with the `action` + `user_ids` format, where the `action` field determines the operation type. **Workspace API keys** address users by email or CodeRabbit user ID (`cr_user_id`) with the `members` format, where each entry declares its desired seat state via `seat_assigned`. Sending the `action` + `user_ids` format with a workspace API key (or the `members` format with an organization key) fails with an `INVALID_REQUEST` error.
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: '#/components/schemas/ManageSeatsRequest'
+              - $ref: '#/components/schemas/ManageSeatsMembersRequest'
+            examples:
+              assign:
+                summary: Assign seats (organization or self-hosted instance key)
+                value:
+                  action: assign
+                  user_ids:
+                  - '121358802'
+                  - '22605247'
+              unassign:
+                summary: Unassign seats (organization or self-hosted instance key)
+                value:
+                  action: unassign
+                  user_ids:
+                  - '121358802'
+                  - '22605247'
+              assignByEmail:
+                summary: Assign seats (workspace key)
+                value:
+                  members:
+                  - email: jane@example.com
+                    seat_assigned: true
+                  - cr_user_id: 3f8e2a9c-6b1d-4e5a-9c7f-2d4b8a6e1c3b
+                    seat_assigned: true
+              unassignByEmail:
+                summary: Unassign seats (workspace key)
+                value:
+                  members:
+                  - email: jane@example.com
+                    seat_assigned: false
+      responses:
+        '200':
+          description: 'Operation completed (check status field for partial failures). The `succeeded` and `failed` entries echo the identifiers used in the request: provider user IDs for organization and self-hosted instance keys; for workspace keys, whichever identifier each member supplied (`cr_user_id` when provided, otherwise `email`).'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+              example:
+                status: success
+                succeeded:
+                - '121358802'
+                - '22605247'
+                failed: []
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: BATCH_SIZE_EXCEEDED
+                  message: Maximum 500 users per request
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or inactive API key
+        '403':
+          description: Forbidden - Not an admin or missing Enterprise plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: NOT_ADMIN
+                  message: Only administrators can perform seat management operations
+        '410':
+          description: Legacy API key - deprecated and no longer supported for user management
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: LEGACY_API_KEY
+                  message: You are using a legacy API key. We are deprecating use of legacy keys. Regenerate a new API key and retry the request.
+        '429':
+          description: Rate limit exceeded (10 requests per 60 seconds per organization)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: RATE_LIMIT_EXCEEDED
+                  message: Rate limit exceeded. Max 10 requests per 60 seconds
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Always 0 when rate limited
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error while listing users
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Users
+  /v1/users/seats/assignment:
+    get:
+      operationId: get-seat-assignment-mode
+      summary: Get Seat Assignment Mode
+      description: Retrieve the current seat assignment mode for the organization. Only accessible by fully self-hosted organizations with enterprise plans.
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      responses:
+        '200':
+          description: Successfully retrieved seat assignment mode
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatAssignmentModeResponse'
+              example:
+                mode: automatic
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or inactive API key
+        '402':
+          description: Payment Required - No active subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: NO_ACTIVE_SUBSCRIPTION
+                  message: No active subscription found for the organization
+        '403':
+          description: Forbidden - Not an admin, not self-hosted, or missing Enterprise plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: SELF_HOSTED_ONLY
+                  message: This endpoint is only available for self-hosted instances
+        '410':
+          description: Legacy API key - deprecated and no longer supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: LEGACY_API_KEY
+                  message: You are using a legacy API key. We are deprecating use of legacy keys. Regenerate a new API key and retry the request.
+        '429':
+          description: Rate limit exceeded (10 requests per 60 seconds per organization)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: RATE_LIMIT_EXCEEDED
+                  message: Rate limit exceeded. Max 10 requests per 60 seconds
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Always 0 when rate limited
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error while getting seat assignment mode
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Users
+    post:
+      operationId: update-seat-assignment-mode
+      summary: Update Seat Assignment Mode
+      description: Update the seat assignment mode for the organization. Only accessible by fully self-hosted organizations with enterprise plans.
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSeatAssignmentModeRequest'
+            examples:
+              manual:
+                summary: Set to manual mode
+                value:
+                  mode: manual
+              automatic:
+                summary: Set to automatic mode
+                value:
+                  mode: automatic
+      responses:
+        '200':
+          description: Seat assignment mode updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatAssignmentModeResponse'
+              example:
+                mode: manual
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INVALID_REQUEST
+                  message: Invalid enum value. Expected 'manual' | 'automatic', received 'invalid'
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or inactive API key
+        '402':
+          description: Payment Required - No active subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: NO_ACTIVE_SUBSCRIPTION
+                  message: No active subscription found for the organization
+        '403':
+          description: Forbidden - Not an admin, not self-hosted, or missing Enterprise plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: SELF_HOSTED_ONLY
+                  message: This endpoint is only available for self-hosted instances
+        '410':
+          description: Legacy API key - deprecated and no longer supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: LEGACY_API_KEY
+                  message: You are using a legacy API key. We are deprecating use of legacy keys. Regenerate a new API key and retry the request.
+        '429':
+          description: Rate limit exceeded (10 requests per 60 seconds per organization)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: RATE_LIMIT_EXCEEDED
+                  message: Rate limit exceeded. Max 10 requests per 60 seconds
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Always 0 when rate limited
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error while updating seat assignment mode
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Users
+  /v1/users/roles:
+    post:
+      operationId: change-roles
+      summary: Roles
+      description: Bulk change roles for up to 500 users. Returns partial success with details of which users succeeded or failed.
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeRolesRequest'
+            examples:
+              promote:
+                summary: Promote users to admin
+                value:
+                  role: cr_admin
+                  user_ids:
+                  - '121358802'
+                  - '22605247'
+              demote:
+                summary: Change users to member
+                value:
+                  role: cr_member
+                  user_ids:
+                  - '121358802'
+                  - '22605247'
+      responses:
+        '200':
+          description: Operation completed (check status field for partial failures)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResponse'
+              example:
+                status: success
+                succeeded:
+                - '121358802'
+                - '22605247'
+                failed: []
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: BATCH_SIZE_EXCEEDED
+                  message: Maximum 500 users per request
+        '401':
+          description: Unauthorized - Invalid or missing API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Invalid or inactive API key
+        '403':
+          description: Forbidden - Not an admin or missing Enterprise plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: NOT_ADMIN
+                  message: Only administrators can perform seat management operations
+        '410':
+          description: Legacy API key - deprecated and no longer supported for user management
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: LEGACY_API_KEY
+                  message: You are using a legacy API key. We are deprecating use of legacy keys. Regenerate a new API key and retry the request.
+        '429':
+          description: Rate limit exceeded (10 requests per 60 seconds per organization)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: RATE_LIMIT_EXCEEDED
+                  message: Rate limit exceeded. Max 10 requests per 60 seconds
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying
+              schema:
+                type: integer
+            X-RateLimit-Limit:
+              description: Maximum requests allowed per time window
+              schema:
+                type: integer
+            X-RateLimit-Remaining:
+              description: Always 0 when rate limited
+              schema:
+                type: integer
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit resets
+              schema:
+                type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                error:
+                  code: INTERNAL_ERROR
+                  message: Internal server error while listing users
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Users
+components:
+  schemas:
+    UpdateSeatAssignmentModeRequest:
+      type: object
+      description: Request to update the seat assignment mode
+      properties:
+        mode:
+          type: string
+          enum:
+          - automatic
+          - manual
+          description: The seat assignment mode to set. 'automatic' auto-assigns seats when CodeRabbit is tagged; 'manual' requires admin approval.
+      required:
+      - mode
+      additionalProperties: false
+    ManageSeatsMembersRequest:
+      type: object
+      title: Workspace key
+      description: Request to manage user seats with a workspace API key. Members are addressed by email or CodeRabbit user ID, and each entry declares its desired seat state.
+      properties:
+        members:
+          type: array
+          description: Array of members to update. Each member is identified by `email` or `cr_user_id` (at least one required; `cr_user_id` takes precedence when both are provided).
+          minItems: 1
+          maxItems: 500
+          items:
+            type: object
+            description: One member to update. Identify the member by `email` or `cr_user_id` — at least one is required, and `cr_user_id` takes precedence when both are provided.
+            properties:
+              email:
+                type: string
+                format: email
+                description: Email address of the member (unique per workspace). The only identifier that can enroll a member not yet known to CodeRabbit.
+              cr_user_id:
+                type: string
+                format: uuid
+                description: 'CodeRabbit user ID of an existing member — the `user_id` returned by `GET /v1/users` when using a workspace key. Use it to address members who have no email. Never enrolls a new member: an unknown ID fails that entry with `USER_NOT_FOUND`.'
+              seat_assigned:
+                type: boolean
+                description: 'Desired seat state: `true` assigns a seat, `false` unassigns it. Omit to leave the member''s seat unchanged.'
+              identities:
+                type: array
+                description: Declarative replacement of the member's full Git provider identity set. Omit to leave identities untouched; an empty array removes all identities.
+                items:
+                  type: object
+                  properties:
+                    provider:
+                      type: string
+                      description: Git platform provider of this identity
+                    self_hosted_instance_url:
+                      type: string
+                      description: Host URL of the self-hosted instance this identity belongs to. Omit for cloud identities. The URL must match a self-hosted instance registered to the workspace.
+                    user_id:
+                      type: string
+                      description: Provider user ID
+                    username:
+                      type: string
+                      description: Provider username
+                    name:
+                      type: string
+                      description: Display name
+                  required:
+                  - provider
+                  - user_id
+                  additionalProperties: false
+            anyOf:
+            - title: Identified by email
+              required:
+              - email
+            - title: Identified by cr_user_id
+              required:
+              - cr_user_id
+            additionalProperties: false
+      required:
+      - members
+      additionalProperties: false
+    User:
+      type: object
+      description: A user in the organization
+      properties:
+        user_id:
+          type: string
+          description: Unique identifier assigned by the Git provider
+        seat_assigned:
+          type: boolean
+          description: Whether the user has a seat assigned
+        role:
+          type: string
+          description: User role
+      required:
+      - user_id
+      - seat_assigned
+      - role
+      additionalProperties: false
+    ApiError:
+      type: object
+      description: Standard API error response
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              description: Error code identifier
+            message:
+              type: string
+              description: Human-readable error message
+          required:
+          - code
+          - message
+          additionalProperties: false
+      required:
+      - error
+      additionalProperties: false
+    ManageSeatsRequest:
+      type: object
+      title: Organization / self-hosted instance key
+      description: Request to manage user seats with an organization or self-hosted instance API key. Users are addressed by provider user ID.
+      properties:
+        action:
+          type: string
+          enum:
+          - assign
+          - unassign
+          description: Action to perform
+        user_ids:
+          type: array
+          items:
+            type: string
+          description: Array of provider user IDs
+          minItems: 1
+          maxItems: 500
+      required:
+      - action
+      - user_ids
+      additionalProperties: false
+    BulkOperationResponse:
+      type: object
+      description: Response for bulk operations with partial success model
+      properties:
+        status:
+          type: string
+          enum:
+          - success
+          - partial_success
+          - failure
+          description: 'Operation status: ''success'' if all succeeded, ''partial_success'' if some succeeded, ''failure'' if all failed'
+        succeeded:
+          type: array
+          items:
+            type: string
+          description: Array of user IDs that were successfully processed
+        failed:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulkOperationFailure'
+          description: Array of failures with error details
+      required:
+      - status
+      - succeeded
+      - failed
+      additionalProperties: false
+    SeatAssignmentModeResponse:
+      type: object
+      description: Seat assignment mode for the organization
+      properties:
+        mode:
+          type: string
+          enum:
+          - automatic
+          - manual
+          description: The current seat assignment mode. 'automatic' means new developers are auto-assigned seats when CodeRabbit is tagged; 'manual' requires admin approval.
+      required:
+      - mode
+      additionalProperties: false
+    BulkOperationFailure:
+      type: object
+      description: Failed operation details
+      properties:
+        user_id:
+          type: string
+          description: 'Identifier that failed: a provider user ID, or the supplied `cr_user_id`/`email` when the request used a workspace API key'
+        code:
+          type: string
+          description: Error code
+      required:
+      - user_id
+      - code
+      additionalProperties: false
+    ChangeRolesRequest:
+      type: object
+      description: Request to change user roles
+      properties:
+        role:
+          type: string
+          enum:
+          - cr_admin
+          - cr_member
+          description: CodeRabbit user role to assign
+        user_ids:
+          type: array
+          items:
+            type: string
+          description: Array of provider user IDs
+          minItems: 1
+          maxItems: 500
+        org_id:
+          type: string
+          description: Optional organization scope for self-hosted instance API keys. Set to `ALL` (case-insensitive) to apply the role change across every active organization on the self-hosted instance in one request. Set to a provider organization ID to target one organization on the self-hosted instance. Omit `org_id` to preserve the prior single-organization behavior. The `ALL` sentinel is valid only with self-hosted instance API keys; organization, workspace, and legacy keys cannot use it.
+      required:
+      - role
+      - user_ids
+      additionalProperties: false
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

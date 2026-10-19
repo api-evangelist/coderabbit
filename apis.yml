@@ -91,16 +91,142 @@ apis:
   description: >-
     Per-repository behavior is configured with a .coderabbit.yaml file (validated against a published
     JSON schema) controlling review tone, path filters, enabled tools/linters, auto-review, and chat behavior.
-- aid: coderabbit:coderabbit-reports-api
-  name: CodeRabbit Reports API
-  description: The Reports API from CodeRabbit — 1 operation(s) for reports.
-  humanURL: https://docs.coderabbit.ai/api-reference/report-generate
-  baseURL: https://api.coderabbit.ai/api/v1
+- aid: coderabbit:coderabbit-audit-logs-api
+  name: CodeRabbit Audit Logs API
+  description: The Audit Logs API from CodeRabbit — 1 operation(s) for audit logs.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
   tags:
-  - Reports
+  - Audit Logs
   properties:
   - type: OpenAPI
-    url: openapi/coderabbit-reports-api-openapi.yml
+    url: openapi/coderabbit-audit-logs-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-learnings-api
+  name: CodeRabbit Learnings API
+  description: The Learnings API from CodeRabbit — 2 operation(s) for learnings.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Learnings
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-learnings-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-metrics-api
+  name: CodeRabbit Metrics API
+  description: The Metrics API from CodeRabbit — 3 operation(s) for metrics.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Metrics
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-organizations-api
+  name: CodeRabbit Organizations API
+  description: The Organizations API from CodeRabbit — 2 operation(s) for organizations.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-organizations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-report-generate-api
+  name: CodeRabbit Report.generate API
+  description: The Report.generate API from CodeRabbit — 1 operation(s) for report.generate.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Report.generate
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-report-generate-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-role-management-api
+  name: CodeRabbit Role Management API
+  description: The Role Management API from CodeRabbit — 3 operation(s) for role management.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Role Management
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-role-management-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-security-api
+  name: CodeRabbit Security API
+  description: The Security API from CodeRabbit — 1 operation(s) for security.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Security
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-security-api-openapi.yml
+  - type: Documentation
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: APIReference
+    url: https://docs.coderabbit.ai/api-reference/report-generate
+  - type: PostmanCollection
+    url: collections/coderabbit.postman_collection.json
+  - type: OpenCollection
+    url: collections/coderabbit.opencollection.json
+- aid: coderabbit:coderabbit-users-api
+  name: CodeRabbit Users API
+  description: The Users API from CodeRabbit — 4 operation(s) for users.
+  humanURL: https://docs.coderabbit.ai/platforms/
+  baseURL: https://app.coderabbit.ai
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/coderabbit-users-api-openapi.yml
   - type: Documentation
     url: https://docs.coderabbit.ai/api-reference/report-generate
   - type: APIReference

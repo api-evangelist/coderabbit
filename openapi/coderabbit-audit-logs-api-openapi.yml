@@ -1,0 +1,274 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Audit Logs API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Audit Logs
+paths:
+  /v1/audit-logs:
+    get:
+      operationId: audit-logs-list
+      summary: List audit log entries
+      description: Returns a paginated list of organization-level audit log entries. Requires the Enterprise plan, Admin role, and a non-agentic API key.
+      tags:
+      - Audit Logs
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - name: search
+        in: query
+        required: false
+        description: Case-insensitive partial match on actor name. Max 200 characters.
+        schema:
+          type: string
+          maxLength: 200
+      - name: actions
+        in: query
+        required: false
+        description: 'Comma-separated list of action keys to filter by. Up to 50 values. Example: `repository_create,api_key_delete`'
+        schema:
+          type: string
+      - name: resource_types
+        in: query
+        required: false
+        description: 'Comma-separated list of resource type keys to filter by. Up to 50 values. Example: `repository,api_key`'
+        schema:
+          type: string
+      - name: date_from
+        in: query
+        required: false
+        description: Inclusive lower bound for the event timestamp, in ISO 8601 format.
+        schema:
+          type: string
+          format: date-time
+      - name: date_to
+        in: query
+        required: false
+        description: Inclusive upper bound for the event timestamp, in ISO 8601 format. Must be on or after `date_from`.
+        schema:
+          type: string
+          format: date-time
+      - name: page
+        in: query
+        required: false
+        description: Page number (1-based). Defaults to `1`.
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: page_size
+        in: query
+        required: false
+        description: Number of results per page. Defaults to `10`, max `100`.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      x-codeSamples:
+      - lang: cURL
+        source: "curl --request GET \\\n  --url 'https://api.coderabbit.ai/v1/audit-logs?page=1&page_size=25' \\\n  --header 'x-coderabbitai-api-key: <api-key>'"
+      - lang: Python
+        source: 'import requests
+
+
+          url = ''https://api.coderabbit.ai/v1/audit-logs''
+
+
+          headers = {''x-coderabbitai-api-key'': ''<api-key>''}
+
+
+          params = {''page'': 1, ''page_size'': 25}
+
+
+          response = requests.get(url, headers=headers, params=params)
+
+
+          print(response.text)'
+      - lang: JavaScript
+        source: "const options = {method: 'GET', headers: {'x-coderabbitai-api-key': '<api-key>'}};\n\nfetch('https://api.coderabbit.ai/v1/audit-logs?page=1&page_size=25', options)\n  .then(res => res.json())\n  .then(res => console.log(res))\n  .catch(err => console.error(err));"
+      - lang: Go
+        source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io\"\n)\n\nfunc main() {\n\n\turl := \"https://api.coderabbit.ai/v1/audit-logs?page=1&page_size=25\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"x-coderabbitai-api-key\", \"<api-key>\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := io.ReadAll(res.Body)\n\n\tfmt.Println(string(body))\n\n}"
+      responses:
+        '200':
+          description: A paginated list of audit log entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    description: List of audit log entries for the current page.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique entry ID (UUID).
+                        action:
+                          type: string
+                          description: Action key, e.g. `repository_create`.
+                        actionLabel:
+                          type: string
+                          description: Human-readable action label, e.g. `Added repository`.
+                        resourceType:
+                          type: string
+                          description: Resource type key, e.g. `repository`.
+                        resourceTypeLabel:
+                          type: string
+                          description: Human-readable resource type label, e.g. `Repository`.
+                        resourceSummary:
+                          type: string
+                          description: Short description of the affected resource.
+                        actor:
+                          type: object
+                          description: The user or system that performed the action.
+                          properties:
+                            name:
+                              type: string
+                              description: Display name of the actor.
+                            subtitle:
+                              type: string
+                              description: Actor role label when available, otherwise the underlying actor type.
+                            isBot:
+                              type: boolean
+                              description: Whether the actor is a bot.
+                            avatarUrl:
+                              type:
+                              - string
+                              - 'null'
+                              description: Avatar URL, if available.
+                          required:
+                          - name
+                          - subtitle
+                          - isBot
+                          - avatarUrl
+                        metadata:
+                          type:
+                          - object
+                          - 'null'
+                          description: Action-specific payload. Contents vary by action type.
+                        ipAddress:
+                          type:
+                          - string
+                          - 'null'
+                          description: IP address of the request that triggered the action.
+                        createdAt:
+                          type: string
+                          format: date-time
+                          description: ISO 8601 timestamp of when the action occurred.
+                        relativeTime:
+                          type: string
+                          description: Human-readable relative time, e.g. `1d ago`.
+                      required:
+                      - id
+                      - action
+                      - actionLabel
+                      - resourceType
+                      - resourceTypeLabel
+                      - resourceSummary
+                      - actor
+                      - metadata
+                      - ipAddress
+                      - createdAt
+                      - relativeTime
+                  pagination:
+                    type: object
+                    description: Pagination metadata.
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching entries.
+                      total_pages:
+                        type: integer
+                        description: Total number of pages.
+                      has_next_page:
+                        type: boolean
+                        description: Whether a next page is available.
+                      has_previous_page:
+                        type: boolean
+                        description: Whether a previous page is available.
+                    required:
+                    - page
+                    - page_size
+                    - total_count
+                    - total_pages
+                    - has_next_page
+                    - has_previous_page
+                  filter_options:
+                    type: object
+                    description: Distinct action and resource type values present in the organization's log, useful for building filter UIs.
+                    properties:
+                      actions:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type: string
+                              description: Action key.
+                            label:
+                              type: string
+                              description: Human-readable label.
+                            count:
+                              type: integer
+                              description: Number of matching entries.
+                          required:
+                          - value
+                          - label
+                          - count
+                      resource_types:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            value:
+                              type: string
+                              description: Resource type key.
+                            label:
+                              type: string
+                              description: Human-readable label.
+                            count:
+                              type: integer
+                              description: Number of matching entries.
+                          required:
+                          - value
+                          - label
+                          - count
+                    required:
+                    - actions
+                    - resource_types
+                required:
+                - data
+                - pagination
+                - filter_options
+        '400':
+          description: 'Invalid request. Possible error codes: `INVALID_PARAMETER`, `TOO_MANY_ITEMS`, `INVALID_DATE_RANGE`.'
+        '401':
+          description: Invalid or missing API key.
+        '403':
+          description: 'Access denied. Possible error codes: `NOT_ADMIN`, `KEY_TYPE_FORBIDDEN`, `ENTERPRISE_PLAN_REQUIRED`.'
+        '410':
+          description: Legacy API key used (`LEGACY_API_KEY`).
+        '429':
+          description: Rate limit exceeded (`RATE_LIMIT_EXCEEDED`).
+        '500':
+          description: Internal server error (`INTERNAL_ERROR`).
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.

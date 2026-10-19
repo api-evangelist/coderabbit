@@ -1,0 +1,766 @@
+openapi: 3.2.0
+info:
+  title: CodeRabbit API spec Metrics API
+  version: 1.0.0
+servers:
+- url: https://api.coderabbit.ai
+security:
+- ApiKeyAuth: []
+tags:
+- name: Metrics
+paths:
+  /v1/metrics/reviews:
+    get:
+      operationId: review-metrics
+      x-codeSamples:
+      - lang: Shell
+        label: cURL
+        source: "curl --request GET \\\n  --url 'https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20' \\\n  --header 'x-coderabbitai-api-key: <api-key>'"
+      - lang: Python
+        label: Python
+        source: 'import requests
+
+
+          url = ''https://api.coderabbit.ai/v1/metrics/reviews''
+
+
+          headers = {''x-coderabbitai-api-key'': ''<api-key>''}
+
+
+          params = {''start_date'': ''2026-01-01'', ''end_date'': ''2026-01-20''}
+
+
+          response = requests.get(url, headers=headers, params=params)
+
+
+          print(response.text)'
+      - lang: JavaScript
+        label: JavaScript
+        source: "const options = {method: 'GET', headers: {'x-coderabbitai-api-key': '<api-key>'}};\n\nfetch('https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20', options)\n  .then(res => res.json())\n  .then(res => console.log(res))\n  .catch(err => console.error(err));"
+      - lang: PHP
+        label: PHP
+        source: "<?php\n$curl = curl_init();\n\ncurl_setopt_array($curl, [\n  CURLOPT_URL => 'https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20',\n  CURLOPT_RETURNTRANSFER => true,\n  CURLOPT_ENCODING => '',\n  CURLOPT_MAXREDIRS => 10,\n  CURLOPT_TIMEOUT => 30,\n  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,\n  CURLOPT_CUSTOMREQUEST => 'GET',\n  CURLOPT_HTTPHEADER => [\n    'x-coderabbitai-api-key: <api-key>'\n  ],\n]);\n\n$response = curl_exec($curl);\n$err = curl_error($curl);\ncurl_close($curl);\n\nif ($err) {\n  echo 'cURL Error #:' . $err;\n} else {\n  echo $response;\n}\n?>"
+      - lang: Go
+        label: Go
+        source: "package main\n\nimport (\n\t\"fmt\"\n\t\"net/http\"\n\t\"io\"\n)\n\nfunc main() {\n\n\turl := \"https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20\"\n\n\treq, _ := http.NewRequest(\"GET\", url, nil)\n\n\treq.Header.Add(\"x-coderabbitai-api-key\", \"<api-key>\")\n\n\tres, _ := http.DefaultClient.Do(req)\n\n\tdefer res.Body.Close()\n\tbody, _ := io.ReadAll(res.Body)\n\n\tfmt.Println(string(body))\n\n}"
+      - lang: Java
+        label: Java
+        source: "HttpResponse<String> response = Unirest.get(\"https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20\")\n  .header(\"x-coderabbitai-api-key\", \"<api-key>\")\n  .asString();"
+      - lang: Ruby
+        label: Ruby
+        source: 'require ''uri''
+
+          require ''net/http''
+
+
+          url = URI("https://api.coderabbit.ai/v1/metrics/reviews?start_date=2026-01-01&end_date=2026-01-20")
+
+
+          http = Net::HTTP.new(url.host, url.port)
+
+          http.use_ssl = true
+
+
+          request = Net::HTTP::Get.new(url)
+
+          request["x-coderabbitai-api-key"] = "<api-key>"
+
+
+          response = http.request(request)
+
+          puts response.read_body'
+      summary: Metrics Data
+      description: Access CodeRabbit metrics data programmatically via REST API.
+      parameters:
+      - name: x-coderabbitai-api-key
+        description: Your CodeRabbit API key
+        required: true
+        example: cr-xxxxxxxxxx
+        schema:
+          type: string
+        in: header
+      - name: start_date
+        description: Start date in ISO 8601 format (YYYY-MM-DD)
+        required: true
+        example: '2026-01-01'
+        schema:
+          type: string
+          format: date
+        in: query
+      - name: end_date
+        description: End date in ISO 8601 format (YYYY-MM-DD)
+        required: true
+        example: '2026-01-20'
+        schema:
+          type: string
+          format: date
+        in: query
+      - name: status
+        description: Filter finalized pull requests by status
+        required: false
+        schema:
+          type: string
+          enum:
+          - merged
+          - closed
+          - all
+          default: merged
+        in: query
+      - name: organization_ids
+        description: Filter by organization Git provider IDs (comma-separated, max 10). Self-hosted instances only.
+        required: false
+        schema:
+          type: string
+        in: query
+      - name: repository_ids
+        description: Filter by repository Git provider IDs (comma-separated, max 10).
+        required: false
+        example: 672319970,849426160
+        schema:
+          type: string
+        in: query
+      - name: user_ids
+        description: Filter by author Git provider IDs (comma-separated, max 10).
+        required: false
+        schema:
+          type: string
+        in: query
+      - name: format
+        description: Response format
+        required: false
+        schema:
+          type: string
+          enum:
+          - json
+          - csv
+          default: json
+        in: query
+      - name: limit
+        description: Maximum records to return
+        required: false
+        schema:
+          type: integer
+          default: 1000
+        in: query
+      - name: cursor
+        description: Pagination cursor for fetching next page of results
+        required: false
+        schema:
+          type: string
+        in: query
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewMetric'
+                  next_cursor:
+                    type: string
+                    description: Cursor for fetching the next page of results. Not present if no more results.
+                required:
+                - data
+              example:
+                data:
+                - pr_url: https://github.com/org/repo/pull/123
+                  organization_id: '132028505'
+                  organization_name: my-org
+                  repository_id: '672319970'
+                  repository_name: my-repo
+                  author_id: '14079159'
+                  author_username: john123
+                  created_at: '2025-01-15T10:00:00Z'
+                  ready_for_review_at: '2025-01-15T10:15:00Z'
+                  first_human_review_at: '2025-01-15T10:00:00Z'
+                  last_commit_at: '2025-01-15T10:00:00Z'
+                  merged_at: '2025-01-16T14:30:00Z'
+                  status: merged
+                  review_iterations: 3
+                  estimated_complexity: 3
+                  estimated_review_minutes: 45
+                  coderabbit_comments:
+                    total:
+                      posted: 8
+                      accepted: 5
+                    severity:
+                      critical:
+                        posted: 2
+                        accepted: 1
+                      major:
+                        posted: 3
+                        accepted: 2
+                      minor:
+                        posted: 2
+                        accepted: 1
+                      trivial:
+                        posted: 1
+                        accepted: 1
+                      info:
+                        posted: 0
+                        accepted: 0
+                    category:
+                      security_and_privacy:
+                        posted: 2
+                        accepted: 1
+                      performance_and_scalability:
+                        posted: 1
+                        accepted: 1
+                      functional_correctness:
+                        posted: 2
+                        accepted: 1
+                      maintainability_and_code_quality:
+                        posted: 2
+                        accepted: 1
+                      data_integrity_and_integration:
+                        posted: 1
+                        accepted: 1
+                      stability_and_availability:
+                        posted: 0
+                        accepted: 0
+                next_cursor: '2025-01-16T10:30:00Z'
+            text/csv:
+              schema:
+                type: string
+                description: CSV file with one row per PR. The coderabbit_comments object is flattened into individual columns.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                errors:
+                - code: INVALID_PARAMETER
+                  message: 'start_date: start_date is required'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Invalid or missing API key
+                code: UNAUTHORIZED
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: API access requires an Enterprise plan subscription
+                code: FORBIDDEN
+        '413':
+          description: Payload Too Large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Response exceeds maximum size of 16MB. Please use a smaller date range or add filters.
+                code: RESPONSE_TOO_LARGE
+        '429':
+          description: Too Many Requests
+          headers:
+            X-RateLimit-Limit:
+              description: Maximum number of requests allowed per minute
+              schema:
+                type: integer
+                example: 10
+            X-RateLimit-Remaining:
+              description: Number of requests remaining in the current rate limit window
+              schema:
+                type: integer
+                example: 0
+            X-RateLimit-Reset:
+              description: Unix timestamp when the rate limit window resets
+              schema:
+                type: integer
+                example: 1704067200
+            Retry-After:
+              description: Number of seconds to wait before retrying
+              schema:
+                type: integer
+                example: 60
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Rate limit exceeded. Please retry after 60 seconds.
+                code: RATE_LIMITED
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Metrics
+  /v1/metrics/mcp:
+    x-generated: true
+    get:
+      operationId: mcp-metrics
+      summary: Get MCP server usage by pull request
+      description: Returns one JSON row per merged, reviewed pull request that used MCP, with MCP servers and tools nested under servers. Join to GET /v1/metrics/reviews on pr_url. Counts are best-effort usage telemetry. Access is controlled by an organization-scoped feature flag. Pagination is in write order rather than by merge date, so a pull request written after your cursor already passed its merge date (a backfill) still appears on a later page instead of being silently skipped.
+      tags:
+      - Metrics
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: header
+        name: x-coderabbitai-api-key
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: org_id
+        required: false
+        schema:
+          type: string
+        description: Workspace API keys only; scopes the request to one provider organization.
+      - in: query
+        name: start_date
+        required: true
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: end_date
+        required: true
+        schema:
+          type: string
+          format: date
+      - in: query
+        name: organization_ids
+        schema:
+          type: string
+        description: Comma-separated provider organization IDs. Self-hosted only; maximum 10.
+      - in: query
+        name: repository_ids
+        schema:
+          type: string
+        description: Comma-separated provider repository IDs; maximum 10.
+      - in: query
+        name: user_ids
+        schema:
+          type: string
+        description: Comma-separated provider PR-author IDs; maximum 10.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+      - in: query
+        name: cursor
+        schema:
+          type: string
+        description: Opaque next_cursor from the previous response.
+      responses:
+        '200':
+          description: MCP server usage for merged pull requests
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - next_cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - pr_url
+                      - organization_id
+                      - repository_id
+                      - author_id
+                      - merged_at
+                      - servers
+                      properties:
+                        pr_url:
+                          type: string
+                        organization_id:
+                          type: string
+                        repository_id:
+                          type: string
+                        author_id:
+                          type:
+                          - string
+                          - 'null'
+                        merged_at:
+                          type: string
+                          format: date-time
+                        servers:
+                          type: array
+                          description: MCP servers used during the review.
+                          items:
+                            type: object
+                            required:
+                            - server_name
+                            - insight_count
+                            - tools
+                            properties:
+                              server_name:
+                                type: string
+                                description: Most recently recorded MCP server name for this PR, or the current connection name/internal ID for historical rows without a snapshot.
+                              insight_count:
+                                type: integer
+                                description: Best-effort count of review insights that cited this server as a source.
+                              tools:
+                                type: array
+                                items:
+                                  type: object
+                                  required:
+                                  - tool_name
+                                  - call_count
+                                  properties:
+                                    tool_name:
+                                      type: string
+                                      description: Original MCP tool name when recorded; historical rows may contain the previously stored agent-facing name.
+                                    call_count:
+                                      type: integer
+                                      description: Recorded calls for this tool.
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+        '400':
+          description: Invalid query parameters, or the response exceeds 16 MB (RESPONSE_TOO_LARGE). Add filters or reduce the limit.
+        '401':
+          description: Unauthorized - invalid or missing API key
+        '403':
+          description: Forbidden - Enterprise plan required or agentic key not allowed
+        '404':
+          description: No matching organization exists
+        '429':
+          description: Rate limit exceeded
+        '500':
+          description: Internal server error
+        '503':
+          description: Isolated metrics are preparing (METRICS_PREPARING); retry the same request
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+  /v1/metrics/review-comments:
+    x-generated: true
+    get:
+      operationId: review-comment-metrics
+      summary: Get review comment metrics for merged pull requests
+      description: Returns JSON with one entry per merged pull request that has stored CodeRabbit review comment metrics. The inclusive UTC date window selects pull requests by merge date, regardless of when comments were posted. Pull requests without stored comments are excluded before pagination. Pagination is in write order rather than by merge date, so a pull request written after your cursor already passed its merge date (a backfill, or a reopen/reclose) still appears on a later page instead of being silently skipped. Each nested comment entry represents a stored finding; a comment URL may occur more than once when the posted comment contains multiple findings. Comment text is not returned. Unknown query parameters, including format and status, are rejected. Available on the Enterprise plan. Self-hosted CodeRabbit deployments can use this API when configured to send metrics to CodeRabbit Cloud. Requests include all organizations authorized by the API token unless narrowed by an organization selector.
+      tags:
+      - Metrics
+      security:
+      - ApiKeyAuth: []
+      parameters:
+      - in: header
+        name: x-coderabbitai-api-key
+        required: true
+        schema:
+          type: string
+        description: API key for authentication
+      - in: query
+        name: org_id
+        schema:
+          type: string
+        description: Workspace-scoped API tokens only. Selects one provider organization in the token's workspace. When omitted, includes all organizations authorized by the workspace token. Ignored for organization-scoped and Git-provider instance-scoped keys.
+      - in: query
+        name: start_date
+        required: true
+        schema:
+          type: string
+          format: date
+          example: '2026-09-01'
+        description: Inclusive UTC merge date in YYYY-MM-DD format
+      - in: query
+        name: end_date
+        required: true
+        schema:
+          type: string
+          format: date
+          example: '2026-09-09'
+        description: Inclusive UTC merge date in YYYY-MM-DD format; must not precede start_date
+      - in: query
+        name: repository_ids
+        schema:
+          type: string
+          example: 1027529638,987654321
+        description: Comma-separated provider repository IDs. Maximum 10.
+      - in: query
+        name: user_ids
+        schema:
+          type: string
+          example: 87397876,12345678
+        description: Comma-separated provider PR author IDs from stored PR metrics. Maximum 10.
+      - in: query
+        name: organization_ids
+        schema:
+          type: string
+          example: 184456712,103539130
+        description: Comma-separated provider organization IDs for self-hosted Git provider instance-scoped API keys. Maximum 10 input values. When omitted, includes all authorized organizations in the instance. The filter cannot expand the scope authorized by the API token. Not supported for organization-scoped or workspace-scoped API keys.
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+        description: Maximum number of pull requests per page, not the number of nested comments
+      - in: query
+        name: cursor
+        schema:
+          type: string
+        description: Opaque next_cursor from the previous response. Keep the same date window and filters when fetching subsequent pages.
+      responses:
+        '200':
+          description: Review comment metrics for eligible merged pull requests
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - next_cursor
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - pr_url
+                      - organization_id
+                      - repository_id
+                      - author_id
+                      - merged_at
+                      - coderabbit_comments
+                      properties:
+                        pr_url:
+                          type: string
+                          example: https://github.com/org/repo/pull/123
+                        organization_id:
+                          type: string
+                          description: Provider organization ID
+                        repository_id:
+                          type: string
+                          description: Provider repository ID
+                        author_id:
+                          type:
+                          - string
+                          - 'null'
+                          description: Provider PR author ID from stored PR metrics; null when unavailable
+                        merged_at:
+                          type:
+                          - string
+                          - 'null'
+                          format: date-time
+                          description: Pull request merge timestamp
+                        coderabbit_comments:
+                          type: array
+                          minItems: 1
+                          description: Stored findings; multiple entries may share the same posted comment URL
+                          items:
+                            type: object
+                            required:
+                            - url
+                            - severity
+                            - category
+                            - accepted
+                            properties:
+                              url:
+                                type: string
+                                description: Link to the posted review comment; not a unique finding identifier
+                              severity:
+                                type:
+                                - string
+                                - 'null'
+                                enum:
+                                - critical
+                                - major
+                                - minor
+                                - trivial
+                                - info
+                                - null
+                                description: Finding severity; null for absent, unknown, or none values
+                              category:
+                                type:
+                                - string
+                                - 'null'
+                                enum:
+                                - data_integrity_and_integration
+                                - functional_correctness
+                                - maintainability_and_code_quality
+                                - performance_and_scalability
+                                - security_and_privacy
+                                - stability_and_availability
+                                - null
+                                description: Content category, not the issue type; null when absent or unknown
+                              accepted:
+                                type:
+                                - boolean
+                                - 'null'
+                                description: Stored resolution outcome from AI detection or user confirmation, not necessarily acceptance by the PR author. False is not proof of rejection; null means unknown. This value can change after the comment is posted.
+                  next_cursor:
+                    type:
+                    - string
+                    - 'null'
+                    description: Opaque cursor for the next page; null when no more eligible pull requests remain
+        '400':
+          description: Invalid dates, filters, limit, cursor, or unsupported query parameters
+        '401':
+          description: Invalid or missing API key
+        '403':
+          description: Enterprise access required, agentic key forbidden, organization outside the permitted scope, or review comment metrics unavailable for an organization in the requested scope.
+        '404':
+          description: Selected organization not found in the workspace, or no organizations match the self-hosted Git provider instance filter
+        '413':
+          description: JSON response exceeds 16 MiB. Reduce limit, narrow the date window, or add filters. A single pull request's comments cannot be split across pages; excluding that pull request may be necessary.
+        '429':
+          description: Metrics API rate limit exceeded
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait before retrying
+        '500':
+          description: Internal server error
+        '503':
+          description: Review comment metrics temporarily unavailable; retry later
+          headers:
+            Retry-After:
+              schema:
+                type: integer
+              description: Seconds to wait when isolated metrics are preparing (METRICS_PREPARING)
+components:
+  schemas:
+    ReviewMetric:
+      type: object
+      properties:
+        pr_url:
+          type: string
+          description: Full URL to the pull request
+        author_id:
+          type: string
+          description: Unique identifier assigned by Git provider
+        author_username:
+          type: string
+          description: Username of the PR author
+        organization_id:
+          type: string
+          description: Unique identifier for the organization assigned by Git provider
+        organization_name:
+          type: string
+          description: Organization name
+        repository_id:
+          type: string
+          description: Unique identifier assigned by Git provider
+        repository_name:
+          type: string
+          description: Repository name
+        created_at:
+          type: string
+          format: date-time
+          description: When the PR was created
+        ready_for_review_at:
+          type: string
+          format: date-time
+          description: When the PR became ready for review. Matches created_at if the PR was never a draft, and may be null for older records where this timestamp was not collected.
+        first_human_review_at:
+          type: string
+          format: date-time
+          description: When the first human review was submitted
+        last_commit_at:
+          type: string
+          format: date-time
+          description: When the last non-merge, non-rebased commit was pushed
+        merged_at:
+          type: string
+          format: date-time
+          description: When the PR was merged
+        status:
+          type: string
+          enum:
+          - merged
+          - closed
+          description: Current pull request status
+        review_iterations:
+          type: integer
+          minimum: 0
+          description: Number of CodeRabbit review events recorded for the pull request
+        estimated_complexity:
+          type: integer
+          description: Complexity score (1-5)
+        estimated_review_minutes:
+          type: integer
+          description: Estimated time to review in minutes
+        coderabbit_comments:
+          type: object
+          description: CodeRabbit comment metrics grouped by total, severity, and category
+          properties:
+            total:
+              $ref: '#/components/schemas/CommentCount'
+            severity:
+              type: object
+              properties:
+                critical:
+                  $ref: '#/components/schemas/CommentCount'
+                major:
+                  $ref: '#/components/schemas/CommentCount'
+                minor:
+                  $ref: '#/components/schemas/CommentCount'
+                trivial:
+                  $ref: '#/components/schemas/CommentCount'
+                info:
+                  $ref: '#/components/schemas/CommentCount'
+            category:
+              type: object
+              properties:
+                security_and_privacy:
+                  $ref: '#/components/schemas/CommentCount'
+                performance_and_scalability:
+                  $ref: '#/components/schemas/CommentCount'
+                functional_correctness:
+                  $ref: '#/components/schemas/CommentCount'
+                maintainability_and_code_quality:
+                  $ref: '#/components/schemas/CommentCount'
+                data_integrity_and_integration:
+                  $ref: '#/components/schemas/CommentCount'
+                stability_and_availability:
+                  $ref: '#/components/schemas/CommentCount'
+    CommentCount:
+      type: object
+      properties:
+        posted:
+          type: integer
+          description: Number of comments posted
+        accepted:
+          type: integer
+          description: Number of comments accepted
+    Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+            required:
+            - code
+            - message
+      required:
+      - errors
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-coderabbitai-api-key
+      description: API key for authentication. You can create an API key from the CodeRabbit dashboard.
