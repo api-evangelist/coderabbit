@@ -233,3 +233,16 @@
   relationship: platform-app
   status: not-a-workflow
   arazzo: null
+- slug: coderabbit-atlassian-own
+  label: Atlassian (own)
+  partner: atlassian
+  partner_name: Atlassian (own)
+  category: Code quality
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://marketplace.atlassian.com/vendors/1225092/coderabbit
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null

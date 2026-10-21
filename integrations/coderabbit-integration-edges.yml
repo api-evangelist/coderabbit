@@ -20,6 +20,7 @@ checked:
 - https://skillsmp.com/sitemap.xml
 - https://www.skills.sh/sitemap.xml
 - eclipse/integrations/eclipse-integration-edges.yml
+- atlassian/integrations/atlassian-integration-edges.yml
 marketplace_apps: []
 edges:
 - partner_name: AWS Marketplace
@@ -325,6 +326,23 @@ edges:
   category: IDE / developer extension marketplace listing
   badges:
   - Verified namespace
+- partner_name: Atlassian (own)
+  partner: atlassian
+  partner_match: mirror
+  mirror_match: domain
+  type: marketplace
+  relationship: platform-app
+  direction: third-party
+  channel: partner-built
+  marketplace: own
+  evidence: https://marketplace.atlassian.com/vendors/1225092/coderabbit
+  mirror_of: atlassian/integrations/atlassian-integration-edges.yml
+  apps:
+  - CodeRabbit
+  listing_count: 1
+  detected: '2026-10-21'
+  detected_by: mirror-platform-listings.py
+  category: Code quality
 source:
 - https://github.com/marketplace?type=apps
 - https://marketplace.visualstudio.com/vscode
