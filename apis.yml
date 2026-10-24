@@ -151,6 +151,8 @@ apis:
   humanURL: https://docs.coderabbit.ai/platforms/
   baseURL: https://app.coderabbit.ai
   tags:
+  - Organization
+  tags_raw:
   - Organizations
   properties:
   - type: OpenAPI
@@ -223,6 +225,8 @@ apis:
   humanURL: https://docs.coderabbit.ai/platforms/
   baseURL: https://app.coderabbit.ai
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
