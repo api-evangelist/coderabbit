@@ -1,4 +1,4 @@
-# CodeRabbit (coderabbit)
+# CodeRabbit
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -66,91 +66,120 @@
 
 CodeRabbit is an AI-powered code review platform that installs as a Git app (GitHub, GitLab, Bitbucket, Azure DevOps) to deliver line-by-line, context-aware reviews and summaries on pull requests, plus IDE and CLI reviews. It exposes a REST API for on-demand developer activity report generation and is configured per-repository with a .coderabbit.yaml file.
 
-**APIs.json:** [https://raw.githubusercontent.com/api-evangelist/coderabbit/refs/heads/main/apis.yml](https://raw.githubusercontent.com/api-evangelist/coderabbit/refs/heads/main/apis.yml)
+**Areas:** Artificial Intelligence · Code Review · Developer Tools · Pull Requests · DevOps
 
-## Tags
+## CodeRabbit on APIs.io
 
-- AI
-- Code Review
-- Developer Tools
-- Pull Requests
-- DevOps
+Everything profiled for CodeRabbit is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/coderabbit/](https://apis.io/providers/coderabbit/)** — or go straight to one of the APIs or properties below.
 
-## Timestamps
+### APIs (3)
 
-- **Created:** 2026-06-21
-- **Modified:** 2026-06-21
+- [CodeRabbit Git App Integration](https://apis.io/apis/coderabbit/coderabbit-git-app-integration/) — CodeRabbit installs as a Git application on GitHub, GitLab, Bitbucket, and Azure DevOps, subscribing to pull/merge request events to post AI reviews,…
+- [CodeRabbit Configuration](https://apis.io/apis/coderabbit/coderabbit-configuration/) — Per-repository behavior is configured with a .coderabbit.yaml file (validated against a published JSON schema) controlling review tone, path filters,…
+- [CodeRabbit Reports API](https://apis.io/apis/coderabbit/coderabbit-reports-api/) — The Reports API from CodeRabbit — 1 operation(s) for reports.
 
-## APIs
+### Published properties
 
-### CodeRabbit Reports API
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
 
-REST API for generating developer activity reports over a date range, authenticated with the x-coderabbitai-api-key header. The POST /report.generate endpoint returns an on-demand report and supports prompt templates, grouping, and parameter filters.
+#### Agentic access (1)
 
-- **Human URL:** [https://docs.coderabbit.ai/api-reference/report-generate](https://docs.coderabbit.ai/api-reference/report-generate)
-- **Base URL:** `https://api.coderabbit.ai/api/v1`
+Which operations an agent can call, which act, and which need a human in the loop.
 
-#### Tags
+- [Coderabbit Agentic Access](https://apis.io/agentic-access/coderabbit/coderabbit-agentic-access/)
 
-- Reports
-- Analytics
-- Developer Activity
+#### Collections (2)
 
-#### Properties
+Postman and Open Collection request collections.
 
-- [Documentation](https://docs.coderabbit.ai/api-reference/report-generate)
-- [API Reference](https://docs.coderabbit.ai/api-reference/report-generate)
-- [OpenAPI](openapi/coderabbit-openapi.yml) — [OpenAPI Specification](https://spec.openapis.org/oas/latest.html)
-- [Postman Collection](collections/coderabbit.postman_collection.json) — [Postman Collection 2.1](https://schema.getpostman.com/json/collection/v2.1.0/collection.json)
-- [Open Collection](collections/coderabbit.opencollection.json) — [Open Collection 1.0](https://schema.opencollection.com/opencollection/v1.0.0.json)
+- [CodeRabbit API](https://apis.io/collections/coderabbit/open-coderabbit/)
+- [CodeRabbit Reports API](https://apis.io/collections/coderabbit/open-coderabbit-reports-api/)
 
-### CodeRabbit Git App Integration
+#### Security (3)
 
-CodeRabbit installs as a Git application on GitHub, GitLab, Bitbucket, and Azure DevOps, subscribing to pull/merge request events to post AI reviews, summaries, and chat replies. Integration is event-driven rather than a public REST surface.
+Authentication, trust centre, and vulnerability disclosure.
 
-- **Human URL:** [https://docs.coderabbit.ai/platforms/](https://docs.coderabbit.ai/platforms/)
-- **Base URL:** `https://app.coderabbit.ai`
+- [Coderabbit Authentication](https://apis.io/security/coderabbit/coderabbit-authentication/)
+- [Coderabbit Domain Security](https://apis.io/security/coderabbit/coderabbit-domain-security/)
+- [Coderabbit Vulnerability Disclosure](https://apis.io/security/coderabbit/coderabbit-vulnerability-disclosure/)
 
-#### Tags
+#### Plans and pricing (1)
 
-- Git App
-- Pull Requests
-- Webhooks
+Published plans, tiers and prices.
 
-#### Properties
+- [Coderabbit Plans Pricing](https://apis.io/plans/coderabbit/coderabbit-plans-pricing/)
 
-- [Documentation](https://docs.coderabbit.ai/platforms/)
-- [Getting Started](https://docs.coderabbit.ai/getting-started/quickstart)
+#### Rate limits (1)
 
-### CodeRabbit Configuration
+Published request limits.
 
-Per-repository behavior is configured with a .coderabbit.yaml file (validated against a published JSON schema) controlling review tone, path filters, enabled tools/linters, auto-review, and chat behavior.
+- [Coderabbit Rate Limits](https://apis.io/rate-limits/coderabbit/coderabbit-rate-limits/)
 
-- **Human URL:** [https://docs.coderabbit.ai/getting-started/configure-coderabbit](https://docs.coderabbit.ai/getting-started/configure-coderabbit)
-- **Base URL:** `https://docs.coderabbit.ai`
+#### FinOps (1)
 
-#### Tags
+What the API costs to run, by operation.
 
-- Configuration
-- YAML
-- Repository Settings
+- [Coderabbit Finops](https://apis.io/finops/coderabbit/coderabbit-finops/)
 
-#### Properties
+## Where to find this API
 
-- [Documentation](https://docs.coderabbit.ai/getting-started/configure-coderabbit)
-- [Reference](https://docs.coderabbit.ai/reference/configuration)
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
 
-## Common Properties
-
-- [GitHub Organization](https://github.com/coderabbitai)
-- [LinkedIn](https://www.linkedin.com/company/coderabbitai)
 - [Website](https://www.coderabbit.ai)
 - [Documentation](https://docs.coderabbit.ai)
-- [Plans](plans/coderabbit-plans-pricing.yml)
-- [Rate Limits](rate-limits/coderabbit-rate-limits.yml)
-- [Fin Ops](finops/coderabbit-finops.yml)
+- [Pricing](https://www.coderabbit.ai/pricing)
+- [Blog](https://www.coderabbit.ai/feed)
+- [GitHub](https://github.com/coderabbitai)
 
-## Maintainers
+## API Evangelist rating
 
-**FN:** Kin Lane
-**Email:** kin@apievangelist.com
+**Kin Score 37.9** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 52.7 |
+| Contract governance | 0.0 |
+| Operational transparency | 10.5 |
+| Developer ergonomics | 44.0 |
+| Access clarity | 42.1 |
+
+**Agent readiness 22.9** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | — |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | derived (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.4** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/coderabbit/](https://apis.io/providers/coderabbit/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for CodeRabbit: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/coderabbit/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
